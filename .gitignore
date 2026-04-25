@@ -27,3 +27,7 @@ out/
 # Logs
 *.log
 npm-debug.log*
+
+#Arquivos.md
+.md
+*.md
