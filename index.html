@@ -1203,6 +1203,7 @@
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li id="navAuthItem"><a href="/conta.html" id="navAuthLink">Entrar</a></li>
+          <li id="navSubscribeItem"><a href="#" onclick="openCheckout('anual');return false" class="nav-cta">Assinar Agora</a></li>
         </ul>
         <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
           <span></span><span></span><span></span>
@@ -1234,7 +1235,7 @@
             </a>
             <a href="#pricing" class="btn-secondary">Ver planos →</a>
           </div>
-          <p class="hero-note">Windows 10/11 · 64-bit · v1.0.36</p>
+          <p class="hero-note">Windows 10/11 · 64-bit · <span class="app-version">v1.0.36</span></p>
         </div>
 
         <div class="hero-visual">
@@ -1633,7 +1634,7 @@
           </a>
           <a href="#pricing" class="btn-secondary">Ver plano Pro →</a>
         </div>
-        <p class="cta-note">Windows 10/11 · 64-bit · v1.0.36 · Atualização automática incluída</p>
+        <p class="cta-note">Windows 10/11 · 64-bit · <span class="app-version">v1.0.36</span> · Atualização automática incluída</p>
       </div>
     </div>
   </section>
@@ -1970,7 +1971,24 @@
           <span class="nav-user-avatar">${initial}</span>
           ${displayName}
         </a>`;
+        // Esconde "Assinar Agora" se já está logado
+        const subItem = document.getElementById('navSubscribeItem');
+        if (subItem) subItem.style.display = 'none';
       } catch { /* silent — won't block page */ }
+    })();
+
+    // ─── Versão dinâmica via GitHub Releases ─────────────────
+    (async function fetchLatestVersion() {
+      try {
+        const res = await fetch('https://api.github.com/repos/wyllenlima/VeloxVid-releases/releases/latest', {
+          headers: { Accept: 'application/vnd.github+json' }
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        const tag = data.tag_name; // ex: "v1.0.37"
+        if (!tag) return;
+        document.querySelectorAll('.app-version').forEach(el => el.textContent = tag);
+      } catch { /* falha silenciosa — mantém versão hardcoded */ }
     })();
 
     // ─── Mobile hamburger ─────────────────────────────────────
