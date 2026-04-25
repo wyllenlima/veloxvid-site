@@ -298,6 +298,20 @@
 
     .dashboard-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
 
+    /* ─── Remember me checkbox ─── */
+    .form-check {
+      display: flex; align-items: center; gap: 8px;
+      margin: 10px 0 4px;
+    }
+    .form-check input[type="checkbox"] {
+      width: 16px; height: 16px; accent-color: var(--blue);
+      cursor: pointer; flex-shrink: 0;
+    }
+    .form-check label {
+      font-size: 0.83rem; color: var(--txt-2);
+      cursor: pointer; user-select: none;
+    }
+
     /* ─── Password field with eye toggle ─── */
     .pw-wrap { position: relative; }
     .pw-wrap .form-input { padding-right: 44px; }
@@ -388,6 +402,10 @@
                   <svg id="loginPassword-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
               </div>
+            </div>
+            <div class="form-check">
+              <input type="checkbox" id="rememberMe" checked />
+              <label for="rememberMe">Lembrar de mim</label>
             </div>
             <button class="btn-primary" type="submit" id="loginBtn">Entrar</button>
           </form>
@@ -554,6 +572,10 @@
     const API       = 'https://veloxvid-production.up.railway.app';
     const TOKEN_KEY = 'vv_token';
 
+    function getToken()               { return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY); }
+    function setToken(t, remember)    { if (remember) { localStorage.setItem(TOKEN_KEY, t); sessionStorage.removeItem(TOKEN_KEY); } else { sessionStorage.setItem(TOKEN_KEY, t); localStorage.removeItem(TOKEN_KEY); } }
+    function removeToken()            { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); }
+
     // ─── Parâmetros da URL ────────────────────────────────────
     const params     = new URLSearchParams(location.search);
     const resetToken = params.get('token');
@@ -597,7 +619,7 @@
         return;
       }
 
-      const token = localStorage.getItem(TOKEN_KEY);
+      const token = getToken();
       if (!token) {
         showView('viewLogin');
         return;
@@ -644,7 +666,8 @@
           return;
         }
 
-        localStorage.setItem(TOKEN_KEY, data.access_token);
+        const remember = document.getElementById('rememberMe').checked;
+        setToken(data.access_token, remember);
         window.location.href = '/';
       } catch {
         showAlert('loginError', 'Erro de conexão. Verifique sua internet e tente novamente.');
@@ -705,7 +728,7 @@
       const btn = document.getElementById('cpwBtn');
       btn.disabled = true; btn.textContent = 'Salvando...';
 
-      const token = localStorage.getItem(TOKEN_KEY);
+      const token = getToken();
       try {
         const res  = await fetch(`${API}/auth/change-password`, {
           method:  'POST',
@@ -731,7 +754,7 @@
       btn.disabled    = true;
       btn.textContent = 'Abrindo...';
 
-      const token = localStorage.getItem(TOKEN_KEY);
+      const token = getToken();
       try {
         const res  = await fetch(`${API}/checkout/portal`, {
           method:  'POST',
@@ -823,14 +846,14 @@
 
     // ─── Logout ──────────────────────────────────────────────
     function doLogout() {
-      const token = localStorage.getItem(TOKEN_KEY);
+      const token = getToken();
       if (token) {
         fetch(`${API}/auth/session`, {
           method:  'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         }).catch(() => {});
       }
-      localStorage.removeItem(TOKEN_KEY);
+      removeToken();
       showView('viewLogin');
     }
 

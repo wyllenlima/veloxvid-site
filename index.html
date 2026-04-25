@@ -1957,13 +1957,13 @@
 
     // ─── Auth state in nav ────────────────────────────────────
     (async function initNavAuth() {
-      const token = localStorage.getItem('vv_token');
+      const token = localStorage.getItem('vv_token') || sessionStorage.getItem('vv_token');
       if (!token) return;
       try {
         const res = await fetch('https://veloxvid-production.up.railway.app/auth/me', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        if (!res.ok) { localStorage.removeItem('vv_token'); return; }
+        if (!res.ok) { localStorage.removeItem('vv_token'); sessionStorage.removeItem('vv_token'); return; }
         const user = await res.json();
         const displayName = user.name || user.email.split('@')[0];
         const initial = displayName.charAt(0).toUpperCase();
@@ -2004,6 +2004,7 @@
         }).catch(() => {});
       }
       localStorage.removeItem('vv_token');
+      sessionStorage.removeItem('vv_token');
       location.reload();
     }
 
