@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VeloxVid — IA Local para Criadores de Conteúdo</title>
+  <meta name="description" content="Transcreva, gere roteiros e automatize seu conteúdo com IA 100% local. Seus arquivos nunca saem do seu computador. Windows 10/11." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0e1117;
+      --bg-card:    #14171f;
+      --bg-card2:   #1a1d27;
+      --border:     rgba(255,255,255,0.07);
+      --border-mid: rgba(255,255,255,0.12);
+      --txt:        #ffffff;
+      --txt-2:      rgba(255,255,255,0.5);
+      --txt-3:      rgba(255,255,255,0.28);
+      --blue:       #4A9EFF;
+      --blue-dim:   rgba(74,158,255,0.15);
+      --blue-glow:  rgba(74,158,255,0.35);
+      --green:      #4CAF50;
+      --red:        #FF5A5A;
+      --radius:     12px;
+      --radius-lg:  20px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--txt);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── Grain overlay ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── Typography ─── */
+    .font-display { font-family: 'Syne', sans-serif; }
+    .font-mono    { font-family: 'JetBrains Mono', monospace; }
+
+    h1,h2,h3 { font-family: 'Syne', sans-serif; line-height: 1.1; letter-spacing: -0.02em; }
+
+    /* ─── Layout helpers ─── */
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { position: relative; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      border-bottom: 1px solid transparent;
+      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      background: rgba(14,17,23,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: var(--txt);
+      text-decoration: none;
+      letter-spacing: -0.03em;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--txt-2);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--txt); }
+    .nav-cta {
+      background: var(--blue);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      font-size: 0.875rem !important;
+      transition: opacity 0.2s, transform 0.2s !important;
+    }
+    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); color: #fff !important; }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 64px;
+      overflow: hidden;
+    }
+
+    /* Radial gradient bg */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(ellipse at center, rgba(74,158,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 80px 0;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue-dim);
+      border: 1px solid rgba(74,158,255,0.3);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--blue);
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
+      50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76,175,80,0); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      font-weight: 800;
+      margin-bottom: 24px;
+      line-height: 1.05;
+    }
+    .hero h1 .accent { color: var(--blue); }
+    .hero h1 .line-2 { display: block; }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--txt-2);
+      max-width: 440px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+      box-shadow: 0 0 0 rgba(74,158,255,0);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(74,158,255,0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--txt-2);
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      border: 1px solid var(--border-mid);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover {
+      color: var(--txt);
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--txt-3);
+      letter-spacing: 0.03em;
+    }
+
+    /* ─── Waveform visual ─── */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mockup-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .mockup-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(74,158,255,0.08),
+        0 40px 80px rgba(0,0,0,0.6),
+        0 0 120px rgba(74,158,255,0.08);
+    }
+
+    .mockup-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .titlebar-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .td-red   { background: #ff5f57; }
+    .td-amber { background: #febc2e; }
+    .td-green { background: #28c840; }
+    .titlebar-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--txt-3);
+      margin-left: 8px;
+    }
+
+    .mockup-body { padding: 20px; }
+
+    .mock-file-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(74,158,255,0.06);
+      border: 1px solid rgba(74,158,255,0.15);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .mock-file-icon {
+      font-size: 1.1rem;
+    }
+    .mock-file-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--blue);
+    }
+    .mock-file-size {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--txt-3);
+      margin-left: auto;
+    }
+
+    /* Waveform bars */
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 48px;
+      padding: 0 4px;
+      margin-bottom: 16px;
+    }
+    .waveform-bar {
+      flex: 1;
+      background: var(--blue);
+      border-radius: 2px;
+      opacity: 0.8;
+      animation: wave var(--d, 1.2s) ease-in-out infinite alternate;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes wave {
+      from { transform: scaleY(0.2); opacity: 0.4; }
+      to   { transform: scaleY(1);   opacity: 0.9; }
+    }
+
+    .mock-transcript {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .mock-ts-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: flex-start;
+    }
+    .mock-ts-row:last-child { margin-bottom: 0; }
+    .mock-ts-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--blue);
+      padding-top: 2px;
+      white-space: nowrap;
+    }
+    .mock-ts-text {
+      font-size: 0.78rem;
+      color: var(--txt-2);
+      line-height: 1.5;
+    }
+    .mock-ts-text .hl { color: var(--txt); font-weight: 500; }
+
+    /* Floating badge */
+    .mockup-badge {
+      position: absolute;
+      bottom: -16px;
+      right: -20px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border-mid);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .mockup-badge .badge-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--green);
+      display: block;
+      line-height: 1;
+    }
+    .mockup-badge .badge-lbl {
+      color: var(--txt-3);
+      font-size: 0.68rem;
+      margin-top: 3px;
+      display: block;
+    }
+
+    /* ─── Trust bar ─── */
+    .trust-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      overflow: hidden;
+    }
+    .trust-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 28px;
+      color: var(--txt-2);
+      font-size: 0.82rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .trust-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border-mid);
+    }
+    .trust-icon { color: var(--blue); font-size: 1rem; }
+
+    /* ─── Section heading ─── */
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--blue);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--txt-2);
+      max-width: 520px;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ─── Features ─── */
+    .features {
+      padding: 120px 0 80px;
+    }
+    .features-head {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .features-head .section-sub { margin: 0 auto; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      cursor: default;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(74,158,255,0.07) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(74,158,255,0.35);
+      box-shadow: 0 0 32px rgba(74,158,255,0.12), 0 8px 32px rgba(0,0,0,0.3);
+      transform: translateY(-3px);
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    /* span 2 cols for 5th card */
+    .feature-card.wide {
+      grid-column: span 2;
+    }
+
+    .feat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--blue-dim);
+      border: 1px solid rgba(74,158,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      position: relative; z-index: 1;
+    }
+    .feat-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      position: relative; z-index: 1;
+    }
+    .feat-desc {
+      font-size: 0.88rem;
+      color: var(--txt-2);
+      line-height: 1.65;
+      font-weight: 300;
+      position: relative; z-index: 1;
+    }
+    .feat-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+      position: relative; z-index: 1;
+    }
+    .feat-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      color: var(--txt-3);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+
+    /* ─── Steps ─── */
+    .steps-section {
+      padding: 80px 0;
+    }
+    .steps-head {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .steps-head .section-sub { margin: 0 auto; }
+
+    .steps-track {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .steps-track::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(16.66% + 16px);
+      right: calc(16.66% + 16px);
+      height: 1px;
+      background: linear-gradient(to right, var(--blue), rgba(74,158,255,0.3), var(--blue));
+      opacity: 0.4;
+    }
+
+    .step-item {
+      text-align: center;
+      padding: 0 24px;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--blue);
+      position: relative;
+    }
+    .step-num::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: transparent;
+      border: 1px solid rgba(74,158,255,0.2);
+    }
+    .step-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--txt-2);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ─── Privacy section ─── */
+    .privacy-section {
+      padding: 80px 0;
+    }
+    .privacy-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 60px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .privacy-inner::before {
+      content: '';
+      position: absolute;
+      right: -100px; top: -100px;
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, rgba(74,158,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .privacy-list {
+      list-style: none;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .privacy-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.93rem;
+      color: var(--txt-2);
+    }
+    .privacy-item .check {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(76,175,80,0.15);
+      border: 1px solid rgba(76,175,80,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+      color: var(--green);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Compare cards */
+    .compare-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .compare-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .compare-card.winner {
+      background: rgba(74,158,255,0.07);
+      border-color: rgba(74,158,255,0.3);
+    }
+    .compare-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .compare-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .compare-badge-win {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--blue);
+      background: var(--blue-dim);
+      border: 1px solid rgba(74,158,255,0.3);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .compare-badge-lose {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--txt-3);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+    }
+    .compare-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .compare-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .compare-dot.on  { background: var(--green); }
+    .compare-dot.off { background: rgba(255,255,255,0.1); }
+
+    /* ─── Pricing ─── */
+    .pricing-section {
+      padding: 80px 0 120px;
+    }
+    .pricing-head {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .pricing-head .section-sub { margin: 0 auto; }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .pricing-card.featured {
+      border-color: rgba(74,158,255,0.4);
+      background: linear-gradient(145deg, rgba(74,158,255,0.07) 0%, var(--bg-card) 60%);
+    }
+
+    .pricing-popular {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--blue);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 100px;
+      white-space: nowrap;
+      letter-spacing: 0.05em;
+    }
+
+    .plan-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .plan-desc {
+      font-size: 0.83rem;
+      color: var(--txt-2);
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 28px;
+    }
+    .plan-price .currency {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--txt-2);
+    }
+    .plan-price .amount {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .plan-price .period {
+      font-size: 0.83rem;
+      color: var(--txt-3);
+    }
+    .plan-price .free-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .plan-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--txt-2);
+    }
+    .plan-feature .pf-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .pf-icon.yes { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.35); color: var(--green); }
+    .pf-icon.no  { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--txt-3); }
+
+    .btn-plan {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 13px;
+      border-radius: var(--radius);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+    .btn-plan.primary {
+      background: var(--blue);
+      color: #fff;
+    }
+    .btn-plan.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(74,158,255,0.35);
+    }
+    .btn-plan.outline {
+      background: transparent;
+      color: var(--txt-2);
+      border: 1px solid var(--border-mid);
+    }
+    .btn-plan.outline:hover {
+      color: var(--txt);
+      border-color: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    /* ─── FAQ ─── */
+    .faq-section {
+      padding: 40px 0 120px;
+    }
+    .faq-head {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .faq-item.open {
+      border-color: rgba(74,158,255,0.25);
+    }
+    .faq-q {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      background: none;
+      border: none;
+      color: var(--txt);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+    }
+    .faq-arrow {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      color: var(--blue);
+      transition: transform 0.3s, background 0.2s;
+    }
+    .faq-item.open .faq-arrow {
+      transform: rotate(45deg);
+      background: var(--blue-dim);
+    }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .faq-a-inner {
+      padding: 0 24px 20px;
+      font-size: 0.88rem;
+      color: var(--txt-2);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    /* ─── CTA Final ─── */
+    .cta-section {
+      padding: 80px 0 120px;
+    }
+    .cta-box {
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 80px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(74,158,255,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-box h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .cta-box p {
+      font-size: 1.05rem;
+      color: var(--txt-2);
+      margin-bottom: 40px;
+      font-weight: 300;
+      position: relative; z-index: 1;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative; z-index: 1;
+    }
+    .cta-note {
+      margin-top: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--txt-3);
+      position: relative; z-index: 1;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0 48px;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--txt);
+      text-decoration: none;
+    }
+    .footer-logo span { color: var(--blue); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.82rem;
+      color: var(--txt-3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--txt-2); }
+
+    .footer-copy {
+      font-size: 0.78rem;
+      color: var(--txt-3);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ─── Animations on load ─── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-up:nth-child(2) { transition-delay: 0.1s; }
+    .fade-up:nth-child(3) { transition-delay: 0.2s; }
+    .fade-up:nth-child(4) { transition-delay: 0.3s; }
+    .fade-up:nth-child(5) { transition-delay: 0.4s; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        text-align: center;
+        padding: 60px 0;
+      }
+      .hero-badge { margin-left: auto; margin-right: auto; }
+      .hero-sub { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-note { text-align: center; }
+      .mockup-wrap { max-width: 400px; margin: 0 auto; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .feature-card.wide { grid-column: span 1; }
+      .steps-track::before { display: none; }
+      .steps-track { grid-template-columns: 1fr; gap: 40px; }
+      .privacy-inner { grid-template-columns: 1fr; gap: 40px; padding: 40px 28px; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 560px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card.wide { grid-column: span 1; }
+      .trust-item { padding: 6px 14px; font-size: 0.76rem; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav id="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">Velox<span>Vid</span></a>
+        <ul class="nav-links">
+          <li><a href="#features">Ferramentas</a></li>
+          <li><a href="#how">Como funciona</a></li>
+          <li><a href="#pricing">Planos</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest" class="nav-cta">Baixar grátis</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-badge">
+            <span class="dot"></span>
+            WINDOWS · IA LOCAL · SEM ENVIO DE DADOS
+          </div>
+          <h1>
+            Crie mais.<br>
+            <span class="accent">Envie zero</span>
+            <span class="line-2">para a nuvem.</span>
+          </h1>
+          <p class="hero-sub">
+            VeloxVid processa seus áudios e vídeos com IA diretamente no seu computador. Transcrição, roteiros e metadados — tudo local, tudo rápido.
+          </p>
+          <div class="hero-actions">
+            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest" class="btn-primary">
+              ↓ Baixar Grátis
+            </a>
+            <a href="#pricing" class="btn-secondary">Ver planos →</a>
+          </div>
+          <p class="hero-note">Windows 10/11 · 64-bit · v1.0.29</p>
+        </div>
+
+        <div class="hero-visual">
+          <div class="mockup-wrap">
+            <div class="mockup-window">
+              <div class="mockup-titlebar">
+                <span class="titlebar-dot td-red"></span>
+                <span class="titlebar-dot td-amber"></span>
+                <span class="titlebar-dot td-green"></span>
+                <span class="titlebar-name">veloxvid — transcrição</span>
+              </div>
+              <div class="mockup-body">
+                <div class="mock-file-row">
+                  <span class="mock-file-icon">🎙</span>
+                  <span class="mock-file-name">podcast_ep42.mp3</span>
+                  <span class="mock-file-size">128 MB</span>
+                </div>
+                <div class="waveform" id="waveform"></div>
+                <div class="mock-transcript">
+                  <div class="mock-ts-row">
+                    <span class="mock-ts-time">[00:01]</span>
+                    <span class="mock-ts-text"><span class="hl">Hoje vamos falar sobre</span> criação de conteúdo com IA...</span>
+                  </div>
+                  <div class="mock-ts-row">
+                    <span class="mock-ts-time">[00:14]</span>
+                    <span class="mock-ts-text">O diferencial é que <span class="hl">tudo roda localmente</span>, sem custo de API...</span>
+                  </div>
+                  <div class="mock-ts-row">
+                    <span class="mock-ts-time">[00:28]</span>
+                    <span class="mock-ts-text"><span class="hl">Faster-whisper</span> no seu hardware. Sem limites.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mockup-badge">
+              <span class="badge-val">100%</span>
+              <span class="badge-lbl">offline · sem nuvem</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TRUST BAR ─── -->
+  <div class="trust-bar">
+    <div class="container">
+      <div class="trust-inner">
+        <div class="trust-item">
+          <span class="trust-icon">⚡</span>
+          Processamento 100% local
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-icon">∞</span>
+          Sem limite de arquivos
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-icon">🔄</span>
+          Atualização automática
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-icon">🎬</span>
+          MP3 · WAV · MP4 · M4A e mais
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── FEATURES ─── -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="features-head fade-up">
+        <div class="section-label">// ferramentas</div>
+        <h2 class="section-title">Tudo que você precisa,<br>em um só lugar</h2>
+        <p class="section-sub">Cinco ferramentas integradas para levar seu conteúdo do áudio bruto ao vídeo publicado.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card fade-up">
+          <div class="feat-icon">🎙</div>
+          <div class="feat-title">Transcrição Inteligente</div>
+          <p class="feat-desc">Converte áudio e vídeo em texto com faster-whisper, diretamente na sua CPU. Divide em cenas com timestamps precisos.</p>
+          <div class="feat-tags">
+            <span class="feat-tag">faster-whisper</span>
+            <span class="feat-tag">100% offline</span>
+            <span class="feat-tag">timestamps</span>
+          </div>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feat-icon">✍️</div>
+          <div class="feat-title">Gerador de Roteiro VEO3</div>
+          <p class="feat-desc">Transforma a transcrição em prompts otimizados para o Google VEO3. Formato certo, na primeira tentativa.</p>
+          <div class="feat-tags">
+            <span class="feat-tag">Google VEO3</span>
+            <span class="feat-tag">prompts otimizados</span>
+          </div>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feat-icon">🎥</div>
+          <div class="feat-title">Gerador de Vídeos VEO3</div>
+          <p class="feat-desc">Envia prompts em massa para a API VEO3 e automatiza todo o processo de geração de vídeos.</p>
+          <div class="feat-tags">
+            <span class="feat-tag">batch processing</span>
+            <span class="feat-tag">API VEO3</span>
+          </div>
+        </div>
+
+        <div class="feature-card wide fade-up">
+          <div class="feat-icon">📝</div>
+          <div class="feat-title">Títulos, Descrição & Thumbnails</div>
+          <p class="feat-desc">LLM gera título, descrição e sugestões de thumbnail com SEO otimizado para YouTube, direto do conteúdo transcrito. Zero esforço manual.</p>
+          <div class="feat-tags">
+            <span class="feat-tag">LLM local</span>
+            <span class="feat-tag">SEO YouTube</span>
+            <span class="feat-tag">thumbnails</span>
+            <span class="feat-tag">metadados</span>
+          </div>
+        </div>
+
+        <div class="feature-card fade-up">
+          <div class="feat-icon">⚙️</div>
+          <div class="feat-title">Conversor .JSON</div>
+          <p class="feat-desc">Utilitário para converter e adaptar formatos de dados entre as ferramentas do fluxo de produção.</p>
+          <div class="feat-tags">
+            <span class="feat-tag">JSON</span>
+            <span class="feat-tag">utilitário</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STEPS ─── -->
+  <section class="steps-section" id="how">
+    <div class="container">
+      <div class="steps-head fade-up">
+        <div class="section-label">// como funciona</div>
+        <h2 class="section-title">Três passos. Conteúdo pronto.</h2>
+        <p class="section-sub">Instalou, importou, deixou a IA trabalhar. Simples assim.</p>
+      </div>
+
+      <div class="steps-track">
+        <div class="step-item fade-up">
+          <div class="step-num">1</div>
+          <h3 class="step-title">Instale o VeloxVid</h3>
+          <p class="step-desc">Baixe o instalador, execute no Windows e pronto. O app se atualiza sozinho quando houver novidades.</p>
+        </div>
+        <div class="step-item fade-up">
+          <div class="step-num">2</div>
+          <h3 class="step-title">Importe seu áudio ou vídeo</h3>
+          <p class="step-desc">Arraste qualquer arquivo — MP3, WAV, MP4, M4A e outros. Sem limite de tamanho ou quantidade.</p>
+        </div>
+        <div class="step-item fade-up">
+          <div class="step-num">3</div>
+          <h3 class="step-title">Deixe a IA trabalhar</h3>
+          <p class="step-desc">Transcrição, roteiro, título, descrição — tudo gerado automaticamente, localmente, em minutos.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRIVACY ─── -->
+  <section class="privacy-section" id="privacy">
+    <div class="container">
+      <div class="privacy-inner">
+        <div>
+          <div class="section-label">// privacidade & controle</div>
+          <h2 class="section-title">Seus dados ficam no seu computador.</h2>
+          <ul class="privacy-list">
+            <li class="privacy-item">
+              <span class="check">✓</span>
+              Áudios e vídeos nunca saem do seu HD
+            </li>
+            <li class="privacy-item">
+              <span class="check">✓</span>
+              IA roda inteiramente offline após instalação
+            </li>
+            <li class="privacy-item">
+              <span class="check">✓</span>
+              Sem API key de terceiros para transcrição
+            </li>
+            <li class="privacy-item">
+              <span class="check">✓</span>
+              Conteúdo confidencial protegido por padrão
+            </li>
+          </ul>
+        </div>
+
+        <div class="compare-grid">
+          <div class="compare-card winner">
+            <div class="compare-card-head">
+              <span class="compare-label">VeloxVid</span>
+              <span class="compare-badge-win">LOCAL</span>
+            </div>
+            <div class="compare-dots">
+              <span class="compare-dot on"></span>
+              <span class="compare-dot on"></span>
+              <span class="compare-dot on"></span>
+              <span class="compare-dot on"></span>
+              <span class="compare-dot on"></span>
+            </div>
+            <p style="font-size:0.78rem;color:var(--txt-2);margin-top:10px;font-weight:300;">Privado · Rápido · Offline · Sem custo por uso</p>
+          </div>
+          <div class="compare-card">
+            <div class="compare-card-head">
+              <span class="compare-label" style="color:var(--txt-2);">Ferramentas em nuvem</span>
+              <span class="compare-badge-lose">CLOUD</span>
+            </div>
+            <div class="compare-dots">
+              <span class="compare-dot off"></span>
+              <span class="compare-dot off"></span>
+              <span class="compare-dot off"></span>
+              <span class="compare-dot on"></span>
+              <span class="compare-dot off"></span>
+            </div>
+            <p style="font-size:0.78rem;color:var(--txt-3);margin-top:10px;font-weight:300;">Upload obrigatório · Limite de uso · Custo por minuto</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING ─── -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+      <div class="pricing-head fade-up">
+        <div class="section-label">// planos</div>
+        <h2 class="section-title">Comece de graça.<br>Escale quando quiser.</h2>
+        <p class="section-sub">Sem cartão de crédito para começar. Cancele quando quiser.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Free -->
+        <div class="pricing-card fade-up">
+          <div class="plan-name">Free</div>
+          <p class="plan-desc">Para experimentar e conhecer o VeloxVid</p>
+          <div class="plan-price">
+            <span class="free-label">Grátis</span>
+          </div>
+          <ul class="plan-features">
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Transcrição inteligente
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Conversor .JSON
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon no">–</span>
+              <span style="color:var(--txt-3)">Gerador de Roteiro VEO3</span>
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon no">–</span>
+              <span style="color:var(--txt-3)">Gerador de Vídeos VEO3</span>
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon no">–</span>
+              <span style="color:var(--txt-3)">Títulos, Descrição & Thumbnails</span>
+            </li>
+          </ul>
+          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest" class="btn-plan outline">Baixar grátis</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="pricing-card featured fade-up">
+          <div class="pricing-popular">Mais popular</div>
+          <div class="plan-name">Pro</div>
+          <p class="plan-desc">Para criadores que levam conteúdo a sério</p>
+          <div class="plan-price">
+            <span class="currency">R$</span>
+            <span class="amount">—</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="plan-features">
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Tudo do plano Free
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Gerador de Roteiro VEO3
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Gerador de Vídeos VEO3
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Títulos, Descrição & Thumbnails
+            </li>
+            <li class="plan-feature">
+              <span class="pf-icon yes">✓</span>
+              Suporte prioritário
+            </li>
+          </ul>
+          <a href="mailto:contato@veloxvid.com" class="btn-plan primary">Assinar agora</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─── -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="faq-head fade-up">
+        <div class="section-label">// dúvidas frequentes</div>
+        <h2 class="section-title">Perguntas frequentes</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q">
+            O VeloxVid funciona sem internet?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. Após a instalação, a transcrição e as ferramentas de IA rodam 100% offline no seu computador. Internet é necessária apenas para baixar atualizações e para as funcionalidades que usam APIs externas (como o VEO3).</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Quais formatos de arquivo são suportados?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">O VeloxVid aceita MP3, WAV, MP4, M4A e outros formatos de áudio e vídeo comuns. Não há limite de tamanho — o processamento ocorre diretamente no seu HD.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Precisa de uma GPU potente para rodar?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Não. O VeloxVid usa o faster-whisper otimizado para CPU. Qualquer computador Windows moderno (64-bit) consegue rodar sem precisar de GPU dedicada.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Como funciona a atualização automática?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">O app verifica automaticamente por novas versões no GitHub Releases ao iniciar. Quando há uma atualização, você é notificado e pode instalar com um clique — sem precisar baixar o instalador manualmente.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Meus arquivos de áudio e vídeo são enviados para algum servidor?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Jamais. A transcrição acontece inteiramente no seu computador com o modelo faster-whisper. Seus arquivos de mídia nunca saem do seu HD. Só dados de autenticação de conta trafegam pela rede.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Em quais sistemas operacionais roda?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">O VeloxVid v1.0 é exclusivo para Windows 10 e Windows 11 (64-bit). Versões para macOS e Linux podem ser consideradas no futuro.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q">
+            Posso cancelar a assinatura a qualquer momento?
+            <span class="faq-arrow">+</span>
+          </button>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. Sem fidelidade, sem multa. Você pode cancelar quando quiser e continuar usando as funcionalidades Free normalmente.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA FINAL ─── -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Comece agora. É grátis.</h2>
+        <p>Baixe o VeloxVid e veja quanto tempo você vai recuperar toda semana.</p>
+        <div class="cta-actions">
+          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/download/v1.0.36/VeloxVid-Setup.exe" class="btn-primary">
+            ↓ Baixar VeloxVid Grátis
+          </a>
+          <a href="#pricing" class="btn-secondary">Ver plano Pro →</a>
+        </div>
+        <p class="cta-note">Windows 10/11 · 64-bit · v1.0.29 · Atualização automática incluída</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <a href="#" class="footer-logo">Velox<span>Vid</span></a>
+        <ul class="footer-links">
+          <li><a href="#">Termos de Uso</a></li>
+          <li><a href="#">Privacidade</a></li>
+          <li><a href="mailto:contato@veloxvid.com">Contato</a></li>
+          <li><a href="https://github.com/wyllenlima/VeloxVid-releases">GitHub</a></li>
+        </ul>
+        <span class="footer-copy">© 2026 VeloxVid · contato@veloxvid.com</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── JS ─── -->
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    // Generate waveform bars
+    const wf = document.getElementById('waveform');
+    const heights = [20,35,55,70,45,80,60,90,65,50,85,40,75,55,70,45,60,80,35,65,50,75,40,85,55,70,45,60,35,80];
+    heights.forEach((h, i) => {
+      const bar = document.createElement('div');
+      bar.className = 'waveform-bar';
+      bar.style.cssText = `height:${h}%; --d:${0.8 + Math.random()*0.8}s; --delay:${(i * 0.04).toFixed(2)}s; animation-delay:var(--delay)`;
+      wf.appendChild(bar);
+    });
+
+    // Fade-up on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Hero elements visible immediately
+    document.querySelectorAll('.hero .fade-up').forEach(el => {
+      el.classList.add('visible');
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-item').forEach(item => {
+      const btn = item.querySelector('.faq-q');
+      const body = item.querySelector('.faq-a');
+      btn.addEventListener('click', () => {
+        const isOpen = item.classList.contains('open');
+        // close all
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('open');
+          i.querySelector('.faq-a').style.maxHeight = '0';
+        });
+        // open clicked
+        if (!isOpen) {
+          item.classList.add('open');
+          body.style.maxHeight = body.scrollHeight + 'px';
+        }
+      });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
