@@ -132,6 +132,70 @@
     }
     .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); color: #fff !important; }
 
+    /* ─── Nav user badge ─── */
+    .nav-user {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; color: var(--txt-2);
+      font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-user:hover { color: var(--txt); }
+    .nav-user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--blue-dim);
+      border: 1px solid rgba(74,158,255,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: 0.72rem;
+      color: var(--blue);
+    }
+
+    /* ─── Hamburger ─── */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none; border: none;
+      cursor: pointer; padding: 6px;
+      z-index: 101;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--txt-2);
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s, background 0.2s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--txt); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--txt); }
+
+    /* Mobile nav dropdown */
+    @media (max-width: 900px) {
+      .nav-links {
+        position: fixed;
+        top: 64px; left: 0; right: 0;
+        background: rgba(14,17,23,0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        gap: 0; padding: 8px 0 16px;
+        display: none !important;
+      }
+      .nav-links.mobile-open { display: flex !important; }
+      .nav-links li { width: 100%; }
+      .nav-links a {
+        display: block; padding: 12px 24px;
+        font-size: 1rem;
+      }
+      .nav-links .nav-cta {
+        margin: 8px 24px 0;
+        display: block; text-align: center;
+        border-radius: 10px;
+      }
+    }
+
     /* ─── Hero ─── */
     .hero {
       min-height: 100vh;
@@ -739,6 +803,38 @@
     }
     .pricing-head .section-sub { margin: 0 auto; }
 
+    /* Shared features block */
+    .pricing-features-shared {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      max-width: 960px;
+      margin: 0 auto 32px;
+    }
+    .shared-features-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--txt-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .shared-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px 16px;
+    }
+    .shared-feat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: var(--txt-2);
+      font-weight: 400;
+    }
+    .sf-icon { font-size: 0.95rem; flex-shrink: 0; }
+
     .pricing-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1081,8 +1177,10 @@
       .steps-track { grid-template-columns: 1fr; gap: 40px; }
       .privacy-inner { grid-template-columns: 1fr; gap: 40px; padding: 40px 28px; }
       .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+      .shared-features-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-features-shared { padding: 22px 20px; }
       .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
     }
     @media (max-width: 560px) {
       .features-grid { grid-template-columns: 1fr; }
@@ -1099,14 +1197,17 @@
     <div class="container">
       <div class="nav-inner">
         <a href="#" class="nav-logo"><img src="/icon.svg" alt="VeloxVid" />Velox<span>Vid</span></a>
-        <ul class="nav-links">
+        <ul class="nav-links" id="navLinks">
           <li><a href="#features">Ferramentas</a></li>
           <li><a href="#how">Como funciona</a></li>
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="/conta.html">Entrar</a></li>
+          <li id="navAuthItem"><a href="/conta.html" id="navAuthLink">Entrar</a></li>
           <li><a href="https://github.com/wyllenlima/VeloxVid-releases/releases/download/v1.0.36/VeloxVid-Setup.exe" class="nav-cta">Baixar grátis</a></li>
         </ul>
+        <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
@@ -1368,9 +1469,24 @@
       <div class="pricing-head fade-up">
         <div class="section-label">// planos</div>
         <h2 class="section-title">Todas as ferramentas.<br>Escolha seu ciclo.</h2>
-        <p class="section-sub">Todos os planos incluem acesso completo. Cancele quando quiser.</p>
+        <p class="section-sub">Todos os planos incluem acesso completo às ferramentas abaixo. Cancele quando quiser.</p>
       </div>
 
+      <!-- Features incluídas em todos os planos -->
+      <div class="pricing-features-shared fade-up">
+        <div class="shared-features-label">Incluso em todos os planos</div>
+        <div class="shared-features-grid">
+          <div class="shared-feat"><span class="sf-icon">🎙</span>Transcrição Inteligente</div>
+          <div class="shared-feat"><span class="sf-icon">✍️</span>Gerador de Roteiro VEO3</div>
+          <div class="shared-feat"><span class="sf-icon">🎥</span>Gerador de Vídeos VEO3</div>
+          <div class="shared-feat"><span class="sf-icon">📝</span>Títulos, Descrição & Thumbnails</div>
+          <div class="shared-feat"><span class="sf-icon">⚙️</span>Conversor .JSON</div>
+          <div class="shared-feat"><span class="sf-icon">⚡</span>Modo Auto — pipeline completo</div>
+          <div class="shared-feat"><span class="sf-icon">🔄</span>Atualização automática</div>
+        </div>
+      </div>
+
+      <!-- Cards de preço compactos -->
       <div class="pricing-grid">
 
         <!-- Mensal -->
@@ -1385,16 +1501,7 @@
             </div>
           </div>
           <div class="plan-total">&nbsp;</div>
-          <ul class="plan-features">
-            <li class="plan-feature"><span class="pf-icon">✓</span>Transcrição Inteligente</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Roteiro VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Vídeos VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Títulos, Descrição & Thumbnails</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Conversor .JSON</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
-          </ul>
-          <button onclick="openCheckout('mensal')" class="btn-plan outline">Assinar agora</button>
+          <button onclick="openCheckout('mensal')" class="btn-plan outline" style="margin-top:8px">Assinar agora</button>
         </div>
 
         <!-- Trimestral -->
@@ -1410,16 +1517,7 @@
             </div>
           </div>
           <div class="plan-total">R$ 837,00 cobrado trimestralmente</div>
-          <ul class="plan-features">
-            <li class="plan-feature"><span class="pf-icon">✓</span>Transcrição Inteligente</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Roteiro VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Vídeos VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Títulos, Descrição & Thumbnails</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Conversor .JSON</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
-          </ul>
-          <button onclick="openCheckout('trimestral')" class="btn-plan outline">Assinar agora</button>
+          <button onclick="openCheckout('trimestral')" class="btn-plan outline" style="margin-top:8px">Assinar agora</button>
         </div>
 
         <!-- Anual -->
@@ -1435,16 +1533,7 @@
             </div>
           </div>
           <div class="plan-total">R$ 2.988,00 cobrado anualmente · <span style="color:var(--green)">-17%</span></div>
-          <ul class="plan-features">
-            <li class="plan-feature"><span class="pf-icon">✓</span>Transcrição Inteligente</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Roteiro VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Gerador de Vídeos VEO3</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Títulos, Descrição & Thumbnails</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Conversor .JSON</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
-            <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
-          </ul>
-          <button onclick="openCheckout('anual')" class="btn-plan primary">Assinar agora</button>
+          <button onclick="openCheckout('anual')" class="btn-plan primary" style="margin-top:8px">Assinar agora</button>
         </div>
 
       </div>
@@ -1853,6 +1942,44 @@
           e.preventDefault();
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+      });
+    });
+
+    // ─── Auth state in nav ────────────────────────────────────
+    (async function initNavAuth() {
+      const token = localStorage.getItem('vv_token');
+      if (!token) return;
+      try {
+        const res = await fetch('https://veloxvid-production.up.railway.app/auth/me', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) { localStorage.removeItem('vv_token'); return; }
+        const user = await res.json();
+        const displayName = user.name || user.email.split('@')[0];
+        const initial = displayName.charAt(0).toUpperCase();
+        const item = document.getElementById('navAuthItem');
+        item.innerHTML = `<a href="/conta.html" class="nav-user">
+          <span class="nav-user-avatar">${initial}</span>
+          ${displayName}
+        </a>`;
+      } catch { /* silent — won't block page */ }
+    })();
+
+    // ─── Mobile hamburger ─────────────────────────────────────
+    function toggleMobileMenu() {
+      const links = document.getElementById('navLinks');
+      const burger = document.getElementById('navHamburger');
+      const open = links.classList.toggle('mobile-open');
+      burger.classList.toggle('open', open);
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    // Close mobile menu on link click
+    document.querySelectorAll('#navLinks a').forEach(a => {
+      a.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('mobile-open');
+        document.getElementById('navHamburger').classList.remove('open');
+        document.body.style.overflow = '';
       });
     });
   </script>
