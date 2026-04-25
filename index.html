@@ -1203,6 +1203,7 @@
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li id="navAuthItem"><a href="/conta.html" id="navAuthLink">Entrar</a></li>
+          <li id="navLogoutItem" style="display:none"><a href="#" onclick="navLogout();return false" id="navLogoutLink">Sair</a></li>
           <li id="navSubscribeItem"><a href="#" onclick="openCheckout('anual');return false" class="nav-cta">Assinar Agora</a></li>
         </ul>
         <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
@@ -1971,9 +1972,11 @@
           <span class="nav-user-avatar">${initial}</span>
           ${displayName}
         </a>`;
-        // Esconde "Assinar Agora" se já está logado
+        // Esconde "Assinar Agora" e mostra "Sair" se já está logado
         const subItem = document.getElementById('navSubscribeItem');
         if (subItem) subItem.style.display = 'none';
+        const logoutItem = document.getElementById('navLogoutItem');
+        if (logoutItem) logoutItem.style.display = 'list-item';
       } catch { /* silent — won't block page */ }
     })();
 
@@ -1990,6 +1993,19 @@
         document.querySelectorAll('.app-version').forEach(el => el.textContent = tag);
       } catch { /* falha silenciosa — mantém versão hardcoded */ }
     })();
+
+    // ─── Logout rápido do nav ─────────────────────────────────
+    function navLogout() {
+      const token = localStorage.getItem('vv_token');
+      if (token) {
+        fetch('https://veloxvid-production.up.railway.app/auth/session', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => {});
+      }
+      localStorage.removeItem('vv_token');
+      location.reload();
+    }
 
     // ─── Mobile hamburger ─────────────────────────────────────
     function toggleMobileMenu() {
