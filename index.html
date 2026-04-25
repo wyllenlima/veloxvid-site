@@ -98,6 +98,14 @@
       color: var(--txt);
       text-decoration: none;
       letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
     }
     .nav-logo span { color: var(--blue); }
     .nav-links {
@@ -1073,7 +1081,7 @@
   <nav id="nav">
     <div class="container">
       <div class="nav-inner">
-        <a href="#" class="nav-logo">Velox<span>Vid</span></a>
+        <a href="#" class="nav-logo"><img src="/icon.svg" alt="VeloxVid" />Velox<span>Vid</span></a>
         <ul class="nav-links">
           <li><a href="#features">Ferramentas</a></li>
           <li><a href="#how">Como funciona</a></li>
