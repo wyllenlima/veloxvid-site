@@ -1104,6 +1104,7 @@
           <li><a href="#how">Como funciona</a></li>
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
+          <li><a href="/conta.html">Entrar</a></li>
           <li><a href="https://github.com/wyllenlima/VeloxVid-releases/releases/download/v1.0.36/VeloxVid-Setup.exe" class="nav-cta">Baixar grátis</a></li>
         </ul>
       </div>
@@ -1393,7 +1394,7 @@
             <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
             <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
           </ul>
-          <a href="#" class="btn-plan outline">Assinar agora</a>
+          <button onclick="openCheckout('mensal')" class="btn-plan outline">Assinar agora</button>
         </div>
 
         <!-- Trimestral -->
@@ -1418,7 +1419,7 @@
             <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
             <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
           </ul>
-          <a href="#" class="btn-plan outline">Assinar agora</a>
+          <button onclick="openCheckout('trimestral')" class="btn-plan outline">Assinar agora</button>
         </div>
 
         <!-- Anual -->
@@ -1443,7 +1444,7 @@
             <li class="plan-feature"><span class="pf-icon">✓</span>Modo Auto — pipeline completo</li>
             <li class="plan-feature"><span class="pf-icon">✓</span>Atualização automática</li>
           </ul>
-          <a href="#" class="btn-plan primary">Assinar agora</a>
+          <button onclick="openCheckout('anual')" class="btn-plan primary">Assinar agora</button>
         </div>
 
       </div>
@@ -1565,8 +1566,232 @@
     </div>
   </footer>
 
+  <!-- ─── MODAL CHECKOUT ─── -->
+  <style>
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-mid);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%; max-width: 420px;
+      position: relative;
+      animation: modalIn 0.22s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none;
+      color: var(--txt-3); font-size: 1.2rem;
+      cursor: pointer; padding: 4px 8px;
+      border-radius: 6px; line-height: 1;
+      transition: color 0.2s, background 0.2s;
+    }
+    .modal-close:hover { color: var(--txt); background: var(--bg-card2); }
+    .modal-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .modal-sub { color: var(--txt-2); font-size: 0.875rem; font-weight: 300; margin-bottom: 24px; }
+    .modal-plan-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--blue-dim);
+      border: 1px solid rgba(74,158,255,0.3);
+      color: var(--blue);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; padding: 4px 12px;
+      border-radius: 100px; margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+    .modal-form-group { margin-bottom: 13px; }
+    .modal-label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--txt-2); margin-bottom: 5px; }
+    .modal-input {
+      width: 100%;
+      background: var(--bg-card2);
+      border: 1px solid var(--border-mid);
+      border-radius: 10px;
+      padding: 11px 14px;
+      color: var(--txt); font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .modal-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-dim);
+    }
+    .modal-btn {
+      display: block; width: 100%;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 10px;
+      padding: 13px;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; margin-top: 6px;
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+    .modal-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--blue-glow);
+    }
+    .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .modal-alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .modal-alert.show { display: block; }
+    .modal-alert-error   { background: rgba(255,90,90,0.10);  border: 1px solid rgba(255,90,90,0.30);  color: #FF8585; }
+    .modal-footer {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.82rem;
+      color: var(--txt-3);
+    }
+    .modal-footer a { color: var(--blue); text-decoration: underline; }
+
+    .plan-select {
+      display: flex; gap: 8px; margin-bottom: 18px;
+    }
+    .plan-opt {
+      flex: 1; padding: 9px 4px;
+      background: var(--bg-card2);
+      border: 1px solid var(--border-mid);
+      border-radius: 8px;
+      color: var(--txt-2); font-size: 0.78rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      cursor: pointer; text-align: center;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .plan-opt.active {
+      border-color: var(--blue);
+      background: var(--blue-dim);
+      color: var(--blue);
+    }
+    .plan-opt small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; margin-top: 2px; opacity: 0.7; }
+  </style>
+
+  <div class="modal-overlay" id="checkoutModal" onclick="if(event.target===this)closeCheckout()">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+
+      <div class="modal-title">Criar conta</div>
+      <p class="modal-sub">Preencha para prosseguir com o pagamento</p>
+
+      <div class="plan-select" id="planSelect">
+        <button class="plan-opt" data-plan="mensal"     onclick="selectPlan('mensal')">Mensal<small>R$299/mês</small></button>
+        <button class="plan-opt" data-plan="trimestral" onclick="selectPlan('trimestral')">Trimestral<small>R$279/mês</small></button>
+        <button class="plan-opt" data-plan="anual"      onclick="selectPlan('anual')">Anual<small>R$249/mês</small></button>
+      </div>
+
+      <div class="modal-alert modal-alert-error" id="checkoutError"></div>
+
+      <form onsubmit="doCheckout(event)">
+        <div class="modal-form-group">
+          <label class="modal-label" for="ckNome">Nome completo</label>
+          <input class="modal-input" type="text" id="ckNome" placeholder="Seu nome" required autocomplete="name" />
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label" for="ckEmail">E-mail</label>
+          <input class="modal-input" type="email" id="ckEmail" placeholder="seu@email.com" required autocomplete="email" />
+        </div>
+        <div class="modal-form-group">
+          <label class="modal-label" for="ckSenha">Senha <span style="color:var(--txt-3)">(mínimo 6 caracteres)</span></label>
+          <input class="modal-input" type="password" id="ckSenha" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+        </div>
+        <button class="modal-btn" type="submit" id="checkoutBtn">Continuar para pagamento →</button>
+      </form>
+
+      <div class="modal-footer">
+        Já tem conta? <a href="/conta.html">Entrar →</a>
+      </div>
+    </div>
+  </div>
+
   <!-- ─── JS ─── -->
   <script>
+    // ─── Checkout modal ───────────────────────────────────────
+    const API_URL    = 'https://veloxvid-api.up.railway.app';
+    let   activePlan = 'anual';
+
+    function openCheckout(plan) {
+      activePlan = plan || 'anual';
+      selectPlan(activePlan);
+      document.getElementById('checkoutModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('checkoutError').classList.remove('show');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function selectPlan(plan) {
+      activePlan = plan;
+      document.querySelectorAll('.plan-opt').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.plan === plan);
+      });
+    }
+
+    async function doCheckout(e) {
+      e.preventDefault();
+      const errEl = document.getElementById('checkoutError');
+      errEl.classList.remove('show');
+
+      const btn  = document.getElementById('checkoutBtn');
+      btn.disabled    = true;
+      btn.textContent = 'Processando...';
+
+      const name     = document.getElementById('ckNome').value.trim();
+      const email    = document.getElementById('ckEmail').value.trim();
+      const password = document.getElementById('ckSenha').value;
+
+      try {
+        const res  = await fetch(`${API_URL}/checkout/register-and-subscribe`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ name, email, password, plano: activePlan })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          const msg = res.status === 400 && data.detail && data.detail.includes('ativo')
+            ? 'Este e-mail já possui assinatura ativa. <a href="/conta.html">Entrar →</a>'
+            : (data.detail || 'Erro ao processar. Tente novamente.');
+          errEl.innerHTML = msg;
+          errEl.classList.add('show');
+          return;
+        }
+
+        window.location.href = data.url;
+      } catch {
+        errEl.textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
+        errEl.classList.add('show');
+      } finally {
+        btn.disabled    = false;
+        btn.textContent = 'Continuar para pagamento →';
+      }
+    }
+
+    // Fechar com Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeCheckout();
+    });
+
+  </script>
+
     // Nav scroll effect
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
