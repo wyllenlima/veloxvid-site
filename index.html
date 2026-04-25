@@ -1231,7 +1231,7 @@
             VeloxVid processa seus áudios e vídeos com IA diretamente no seu computador. Transcrição, roteiros e metadados — tudo local, tudo rápido.
           </p>
           <div class="hero-actions">
-            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe" class="btn-primary">
+            <a href="#" data-download class="btn-primary">
               ↓ Baixar Grátis
             </a>
             <a href="#pricing" class="btn-secondary">Ver planos →</a>
@@ -1606,7 +1606,7 @@
             <span class="faq-arrow">+</span>
           </button>
           <div class="faq-a">
-            <div class="faq-a-inner">O VeloxVid v1.0 é exclusivo para Windows 10 e Windows 11 (64-bit). Versões para macOS e Linux podem ser consideradas no futuro.</div>
+            <div class="faq-a-inner">O VeloxVid v1.0.36 é exclusivo para Windows 10 e Windows 11 (64-bit). Versões para macOS e Linux podem ser consideradas no futuro.</div>
           </div>
         </div>
 
@@ -1630,7 +1630,7 @@
         <h2>Comece agora. É grátis.</h2>
         <p>Baixe o VeloxVid e veja quanto tempo você vai recuperar toda semana.</p>
         <div class="cta-actions">
-          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe" class="btn-primary">
+          <a href="#" data-download class="btn-primary">
             ↓ Baixar VeloxVid Grátis
           </a>
           <a href="#pricing" class="btn-secondary">Ver plano Pro →</a>
@@ -1811,6 +1811,12 @@
 
   <!-- ─── JS ─── -->
   <script>
+    // ╔══════════════════════════════════════════════════════════╗
+    // ║  RELEASE — altere aqui a cada novo lançamento           ║
+    // ╚══════════════════════════════════════════════════════════╝
+    const APP_RELEASE  = 'v1.0.36'; // ← atualize esta linha
+    const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup.exe`;
+
     // ─── Checkout modal ───────────────────────────────────────
     const API_URL    = 'https://veloxvid-production.up.railway.app';
     let   activePlan = 'anual';
@@ -1980,19 +1986,9 @@
       } catch { /* silent — won't block page */ }
     })();
 
-    // ─── Versão dinâmica via GitHub Releases ─────────────────
-    (async function fetchLatestVersion() {
-      try {
-        const res = await fetch('https://api.github.com/repos/wyllenlima/VeloxVid-releases/releases/latest', {
-          headers: { Accept: 'application/vnd.github+json' }
-        });
-        if (!res.ok) return;
-        const data = await res.json();
-        const tag = data.tag_name; // ex: "v1.0.37"
-        if (!tag) return;
-        document.querySelectorAll('.app-version').forEach(el => el.textContent = tag);
-      } catch { /* falha silenciosa — mantém versão hardcoded */ }
-    })();
+    // ─── Versão e URLs de download ────────────────────────────
+    document.querySelectorAll('.app-version').forEach(el => el.textContent = APP_RELEASE);
+    document.querySelectorAll('[data-download]').forEach(el => el.href = DOWNLOAD_URL);
 
     // ─── Logout rápido do nav ─────────────────────────────────
     function navLogout() {

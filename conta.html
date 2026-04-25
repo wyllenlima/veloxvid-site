@@ -351,7 +351,7 @@
         </a>
         <div class="nav-right">
           <a href="/" class="nav-link">← Voltar</a>
-          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe" class="nav-link">Baixar app</a>
+          <a href="#" data-download class="nav-link">Baixar app</a>
         </div>
       </div>
     </div>
@@ -514,8 +514,7 @@
             <button class="btn-primary" id="portalBtn" onclick="goToPortal()">
               Gerenciar assinatura →
             </button>
-            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe"
-               class="btn-ghost">
+            <a href="#" data-download class="btn-ghost">
               Baixar VeloxVid para Windows
             </a>
           </div>
@@ -569,6 +568,12 @@
   </main>
 
   <script>
+    // ╔══════════════════════════════════════════════════════════╗
+    // ║  RELEASE — altere aqui a cada novo lançamento           ║
+    // ╚══════════════════════════════════════════════════════════╝
+    const APP_RELEASE  = 'v1.0.36'; // ← atualize esta linha
+    const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup.exe`;
+
     const API       = 'https://veloxvid-production.up.railway.app';
     const TOKEN_KEY = 'vv_token';
 
@@ -860,6 +865,9 @@
       removeToken();
       showView('viewLogin');
     }
+
+    // ─── URLs de download ─────────────────────────────────────
+    document.querySelectorAll('[data-download]').forEach(el => el.href = DOWNLOAD_URL);
 
     // ─── Start ───────────────────────────────────────────────
     init();
