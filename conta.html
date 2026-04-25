@@ -298,6 +298,17 @@
 
     .dashboard-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
 
+    /* ─── Password field with eye toggle ─── */
+    .pw-wrap { position: relative; }
+    .pw-wrap .form-input { padding-right: 44px; }
+    .pw-eye {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer;
+      color: var(--txt-3); padding: 4px; line-height: 0;
+      transition: color 0.2s;
+    }
+    .pw-eye:hover { color: var(--txt-2); }
+
     /* ─── Change password ─── */
     .change-pw-wrap { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; }
     .change-pw-toggle {
@@ -370,8 +381,13 @@
             </div>
             <div class="form-group">
               <label class="form-label" for="loginPassword">Senha</label>
-              <input class="form-input" type="password" id="loginPassword"
-                placeholder="••••••••" required autocomplete="current-password" />
+              <div class="pw-wrap">
+                <input class="form-input" type="password" id="loginPassword"
+                  placeholder="••••••••" required autocomplete="current-password" />
+                <button type="button" class="pw-eye" onclick="togglePw('loginPassword',this)" tabindex="-1">
+                  <svg id="loginPassword-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
             </div>
             <button class="btn-primary" type="submit" id="loginBtn">Entrar</button>
           </form>
@@ -421,8 +437,23 @@
           <form onsubmit="doReset(event)">
             <div class="form-group">
               <label class="form-label" for="resetPassword">Nova senha</label>
-              <input class="form-input" type="password" id="resetPassword"
-                placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+              <div class="pw-wrap">
+                <input class="form-input" type="password" id="resetPassword"
+                  placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+                <button type="button" class="pw-eye" onclick="togglePw('resetPassword',this)" tabindex="-1">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="resetPasswordConfirm">Confirmar nova senha</label>
+              <div class="pw-wrap">
+                <input class="form-input" type="password" id="resetPasswordConfirm"
+                  placeholder="••••••••" required minlength="6" autocomplete="new-password" />
+                <button type="button" class="pw-eye" onclick="togglePw('resetPasswordConfirm',this)" tabindex="-1">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
             </div>
             <button class="btn-primary" type="submit" id="resetBtn">Salvar nova senha</button>
           </form>
@@ -482,11 +513,30 @@
               <div class="alert alert-success" id="cpwSuccess"></div>
               <div class="form-group">
                 <label class="form-label">Senha atual</label>
-                <input class="form-input" type="password" id="cpwCurrent" placeholder="••••••••" />
+                <div class="pw-wrap">
+                  <input class="form-input" type="password" id="cpwCurrent" placeholder="••••••••" />
+                  <button type="button" class="pw-eye" onclick="togglePw('cpwCurrent',this)" tabindex="-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <div class="form-group">
                 <label class="form-label">Nova senha</label>
-                <input class="form-input" type="password" id="cpwNew" placeholder="••••••••" minlength="6" />
+                <div class="pw-wrap">
+                  <input class="form-input" type="password" id="cpwNew" placeholder="••••••••" minlength="6" />
+                  <button type="button" class="pw-eye" onclick="togglePw('cpwNew',this)" tabindex="-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirmar nova senha</label>
+                <div class="pw-wrap">
+                  <input class="form-input" type="password" id="cpwConfirm" placeholder="••••••••" minlength="6" />
+                  <button type="button" class="pw-eye" onclick="togglePw('cpwConfirm',this)" tabindex="-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  </button>
+                </div>
               </div>
               <button class="btn-primary" id="cpwBtn" onclick="doChangePassword()">Salvar nova senha</button>
             </div>
@@ -511,6 +561,16 @@
 
     if (isSuccess) {
       document.getElementById('successBanner').style.display = 'flex';
+    }
+
+    // ─── Mostrar/esconder senha ───────────────────────────────
+    const eyeOn  = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+    const eyeOff = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+    function togglePw(id, btn) {
+      const input = document.getElementById(id);
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.innerHTML = show ? eyeOff : eyeOn;
     }
 
     // ─── Gerenciar views ──────────────────────────────────────
@@ -626,6 +686,7 @@
       if (!cpwOpen) {
         document.getElementById('cpwCurrent').value = '';
         document.getElementById('cpwNew').value = '';
+        document.getElementById('cpwConfirm').value = '';
         document.getElementById('cpwError').classList.remove('show');
         document.getElementById('cpwSuccess').classList.remove('show');
       }
@@ -633,11 +694,13 @@
 
     async function doChangePassword() {
       hideAlert('cpwError'); hideAlert('cpwSuccess');
-      const current = document.getElementById('cpwCurrent').value;
-      const newPw   = document.getElementById('cpwNew').value;
+      const current  = document.getElementById('cpwCurrent').value;
+      const newPw    = document.getElementById('cpwNew').value;
+      const confirmPw = document.getElementById('cpwConfirm').value;
 
-      if (!current || !newPw) { showAlert('cpwError', 'Preencha os dois campos.'); return; }
+      if (!current || !newPw || !confirmPw) { showAlert('cpwError', 'Preencha todos os campos.'); return; }
       if (newPw.length < 6)   { showAlert('cpwError', 'Nova senha deve ter pelo menos 6 caracteres.'); return; }
+      if (newPw !== confirmPw) { showAlert('cpwError', 'As senhas não coincidem.'); return; }
 
       const btn = document.getElementById('cpwBtn');
       btn.disabled = true; btn.textContent = 'Salvando...';
@@ -654,6 +717,7 @@
         showAlert('cpwSuccess', 'Senha alterada com sucesso!');
         document.getElementById('cpwCurrent').value = '';
         document.getElementById('cpwNew').value = '';
+        document.getElementById('cpwConfirm').value = '';
       } catch {
         showAlert('cpwError', 'Erro de conexão. Tente novamente.');
       } finally {
@@ -725,6 +789,12 @@
       btn.textContent = 'Salvando...';
 
       const newPassword = document.getElementById('resetPassword').value;
+      const confirmPw   = document.getElementById('resetPasswordConfirm').value;
+      if (newPassword !== confirmPw) {
+        showAlert('resetError', 'As senhas não coincidem.');
+        btn.disabled = false; btn.textContent = 'Salvar nova senha';
+        return;
+      }
       try {
         const res  = await fetch(`${API}/auth/reset-password`, {
           method:  'POST',
