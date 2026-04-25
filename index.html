@@ -1203,7 +1203,6 @@
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li id="navAuthItem"><a href="/conta.html" id="navAuthLink">Entrar</a></li>
-          <li><a href="https://github.com/wyllenlima/VeloxVid-releases/releases/download/v1.0.36/VeloxVid-Setup.exe" class="nav-cta">Baixar grátis</a></li>
         </ul>
         <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
           <span></span><span></span><span></span>
@@ -1230,7 +1229,7 @@
             VeloxVid processa seus áudios e vídeos com IA diretamente no seu computador. Transcrição, roteiros e metadados — tudo local, tudo rápido.
           </p>
           <div class="hero-actions">
-            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest" class="btn-primary">
+            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe" class="btn-primary">
               ↓ Baixar Grátis
             </a>
             <a href="#pricing" class="btn-secondary">Ver planos →</a>
@@ -1629,7 +1628,7 @@
         <h2>Comece agora. É grátis.</h2>
         <p>Baixe o VeloxVid e veja quanto tempo você vai recuperar toda semana.</p>
         <div class="cta-actions">
-          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/download/v1.0.36/VeloxVid-Setup.exe" class="btn-primary">
+          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases/latest/download/VeloxVid-Setup.exe" class="btn-primary">
             ↓ Baixar VeloxVid Grátis
           </a>
           <a href="#pricing" class="btn-secondary">Ver plano Pro →</a>
@@ -1813,6 +1812,15 @@
     // ─── Checkout modal ───────────────────────────────────────
     const API_URL    = 'https://veloxvid-production.up.railway.app';
     let   activePlan = 'anual';
+
+    // Auto-abre o modal se vier de ?checkout=plano (ex: conta.html → "Assinar agora")
+    (function checkAutoCheckout() {
+      const p = new URLSearchParams(location.search).get('checkout');
+      if (p) {
+        history.replaceState({}, '', location.pathname); // limpa a URL
+        requestAnimationFrame(() => openCheckout(p));
+      }
+    })();
 
     function openCheckout(plan) {
       activePlan = plan || 'anual';
