@@ -68,7 +68,7 @@ Na seção de planos, mostrar os 3 cards lado a lado:
 
 O site chama a API do Railway para criar conta + sessão Stripe em uma única chamada.
 
-**Endpoint:** `POST https://veloxvid-api.up.railway.app/checkout/register-and-subscribe`
+**Endpoint:** `POST https://veloxvid-production.up.railway.app/checkout/register-and-subscribe`
 
 **Body JSON:**
 ```json
@@ -121,4 +121,4 @@ O site chama a API do Railway para criar conta + sessão Stripe em uma única ch
 | "Baixar app" | `https://github.com/wyllenlima/VeloxVid-releases/releases/latest` |
 | Logo / Home | `https://veloxvid.com` |
 | Contato | `contato@veloxvid.com` |
-| API base URL | `https://veloxvid-api.up.railway.app` |
+| API base URL | `https://veloxvid-production.up.railway.app` |
