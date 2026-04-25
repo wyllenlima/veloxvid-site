@@ -684,14 +684,18 @@
       document.getElementById('dashName').textContent   = user.name || displayName;
       document.getElementById('dashEmail').textContent  = user.email;
 
-      const labels = { mensal: 'Mensal', trimestral: 'Trimestral', anual: 'Anual', pro: 'Pro' };
-      const label  = labels[user.plan] || (user.plan ? user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Ativo');
+      const labels = { mensal: 'Pro Mensal', trimestral: 'Pro Trimestral', anual: 'Pro Anual', pro: 'Pro' };
+      const label  = labels[user.plan] || (user.plan ? 'Pro ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Pro');
 
       document.getElementById('dashPlanLabel').textContent = label;
       document.getElementById('dashPlanBadge').textContent = label.toUpperCase();
 
       if (user.subscription_end) {
-        const d = new Date(user.subscription_end);
+        // Força parse como hora local (evita bug de fuso UTC-3 com datas sem hora)
+        const raw = user.subscription_end.includes('T')
+          ? user.subscription_end
+          : user.subscription_end + 'T12:00:00';
+        const d = new Date(raw);
         const fmt = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
         document.getElementById('dashExpiry').textContent = fmt;
         document.getElementById('expiryCard').style.display = 'block';
