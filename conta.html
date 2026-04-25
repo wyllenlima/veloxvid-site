@@ -685,7 +685,7 @@
       document.getElementById('dashEmail').textContent  = user.email;
 
       const labels = { mensal: 'Pro Mensal', trimestral: 'Pro Trimestral', anual: 'Pro Anual', pro: 'Pro' };
-      const label  = labels[user.plan] || (user.plan ? 'Pro ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Pro');
+      const label  = labels[user.plan] || (user.plan ? 'Plano ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Pro');
 
       document.getElementById('dashPlanLabel').textContent = label;
       document.getElementById('dashPlanBadge').textContent = label.toUpperCase();
