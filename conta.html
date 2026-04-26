@@ -493,7 +493,6 @@
           <div class="info-card">
             <div class="info-label">PLANO ATIVO</div>
             <div class="info-value">
-              <span id="dashPlanLabel">—</span>
               <span class="badge-plan" id="dashPlanBadge">—</span>
             </div>
           </div>
@@ -511,12 +510,12 @@
           </div>
 
           <div class="dashboard-actions">
-            <button class="btn-primary" id="portalBtn" onclick="goToPortal()">
+            <a href="#" data-download class="btn-primary">
+              ↓ Baixar VeloxVid para Windows
+            </a>
+            <button class="btn-ghost" id="portalBtn" onclick="goToPortal()">
               Gerenciar assinatura →
             </button>
-            <a href="#" data-download class="btn-ghost">
-              Baixar VeloxVid para Windows
-            </a>
           </div>
 
           <!-- Mudar senha -->
@@ -713,10 +712,9 @@
       document.getElementById('dashName').textContent   = user.name || displayName;
       document.getElementById('dashEmail').textContent  = user.email;
 
-      const labels = { mensal: 'Pro Mensal', trimestral: 'Pro Trimestral', anual: 'Pro Anual', pro: 'Pro' };
-      const label  = labels[user.plan] || (user.plan ? 'Plano ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Pro');
+      const labels = { mensal: 'Plano Pro Mensal', trimestral: 'Plano Pro Trimestral', anual: 'Plano Pro Anual', pro: 'Plano Pro' };
+      const label  = labels[user.plan] || (user.plan ? 'Plano ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Plano Pro');
 
-      document.getElementById('dashPlanLabel').textContent = label;
       document.getElementById('dashPlanBadge').textContent = label.toUpperCase();
 
       if (user.subscription_end) {
