@@ -582,9 +582,10 @@
     function removeToken()            { localStorage.removeItem(TOKEN_KEY); sessionStorage.removeItem(TOKEN_KEY); }
 
     // ─── Parâmetros da URL ────────────────────────────────────
-    const params     = new URLSearchParams(location.search);
-    const resetToken = params.get('token');
-    const isSuccess  = params.get('success') === 'true';
+    const params      = new URLSearchParams(location.search);
+    const resetToken  = params.get('token');
+    const magicToken  = params.get('magic');
+    const isSuccess   = params.get('success') === 'true';
 
     if (isSuccess) {
       document.getElementById('successBanner').style.display = 'flex';
@@ -621,6 +622,29 @@
     async function init() {
       if (resetToken) {
         showView('viewReset');
+        return;
+      }
+
+      // Auto-login via magic token (vindo do app desktop)
+      if (magicToken) {
+        showView('viewLoading');
+        history.replaceState(null, '', location.pathname); // limpa ?magic= da URL
+        try {
+          const res = await fetch(`${API}/auth/exchange-magic-token`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ magic_token: magicToken }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setToken(data.access_token, true);
+            renderDashboard(data.user);
+            showView('viewDashboard');
+            return;
+          }
+        } catch {}
+        // Se falhou (token expirado/inválido) → vai para login normalmente
+        showView('viewLogin');
         return;
       }
 
