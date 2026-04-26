@@ -297,6 +297,8 @@
     }
 
     .dashboard-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+    .dashboard-actions .btn-row { display: flex; gap: 8px; }
+    .dashboard-actions .btn-row > * { flex: 1; margin-top: 0; }
 
     /* ─── Remember me checkbox ─── */
     .form-check {
@@ -510,9 +512,14 @@
           </div>
 
           <div class="dashboard-actions">
-            <a href="#" data-download class="btn-primary">
-              ↓ Baixar VeloxVid para Windows
-            </a>
+            <div class="btn-row">
+              <a href="#" data-download class="btn-primary">
+                ↓ Baixar VeloxVid
+              </a>
+              <button class="btn-primary" id="openAppBtn" onclick="openInApp()">
+                ▶ Abrir VeloxVid
+              </button>
+            </div>
             <button class="btn-ghost" id="portalBtn" onclick="goToPortal()">
               Gerenciar assinatura →
             </button>
@@ -780,6 +787,29 @@
     }
 
     // ─── Portal Stripe ────────────────────────────────────────
+    async function openInApp() {
+      const btn = document.getElementById('openAppBtn');
+      btn.disabled    = true;
+      btn.textContent = 'Abrindo...';
+      try {
+        const res  = await fetch(`${API}/auth/magic-token`, {
+          method:  'POST',
+          headers: { Authorization: `Bearer ${getToken()}` }
+        });
+        const data = await res.json();
+        if (res.ok && data.magic_token) {
+          window.location.href = `veloxvid://auth?magic=${data.magic_token}`;
+          setTimeout(() => {
+            btn.disabled    = false;
+            btn.textContent = '▶ Abrir VeloxVid';
+          }, 3000);
+          return;
+        }
+      } catch {}
+      btn.disabled    = false;
+      btn.textContent = '▶ Abrir VeloxVid';
+    }
+
     async function goToPortal() {
       const btn = document.getElementById('portalBtn');
       btn.disabled    = true;
