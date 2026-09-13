@@ -1828,7 +1828,8 @@
     // ║  RELEASE — altere aqui a cada novo lançamento           ║
     // ╚══════════════════════════════════════════════════════════╝
     const APP_RELEASE  = 'v1.0.69'; // ← atualize esta linha
-    const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup.exe`;
+    const APP_VERSION = APP_RELEASE.replace(/^v/, '')
+    const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup-${APP_VERSION}.exe`;
 
     // ─── Checkout modal ───────────────────────────────────────
     const API_URL    = 'https://veloxvid-production.up.railway.app';
