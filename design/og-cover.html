@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- Fonte da imagem de compartilhamento (assets/img/og-cover.jpg). Abrir em 1200x630 e capturar a tela. Não é publicado. -->
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body { position: relative; }
+  .glow { position: absolute; top: -340px; left: 380px; width: 1100px; height: 1100px; background: radial-gradient(ellipse at center, rgba(74,158,255,0.20) 0%, transparent 65%); }
+  .wrap { position: relative; z-index: 2; display: grid; grid-template-columns: 590px 1fr; gap: 50px; align-items: center; height: 630px; padding: 0 70px; }
+  .brand { display: flex; align-items: center; font-family: 'Bricolage Grotesque'; font-weight: 800; font-size: 34px; letter-spacing: -0.03em; margin-bottom: 44px; }
+  .brand img { width: 52px; height: 52px; margin-right: 14px; }
+  .brand span { color: var(--blue); }
+  h1 { font-size: 68px; font-weight: 800; line-height: 1.04; margin-bottom: 30px; text-wrap: initial; }
+  h1 .accent { color: var(--blue); }
+  .tag { font-family: 'JetBrains Mono'; font-size: 17px; color: var(--txt-2); letter-spacing: 0.06em; }
+  .mockup-wrap { max-width: 470px; }
+  .waveform-bar { animation: none; }
+</style></head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <div class="brand"><img src="/logo.png" alt="">Velox<span>Vid</span></div>
+      <h1>Do roteiro ao<br><span class="accent">vídeo pronto.</span><br>Automaticamente.</h1>
+      <div class="tag">WINDOWS · PRODUÇÃO AUTOMÁTICA</div>
+    </div>
+    <div class="mockup-wrap">
+      <div class="mockup-window">
+        <div class="mockup-titlebar"><span class="titlebar-dot td-red"></span><span class="titlebar-dot td-amber"></span><span class="titlebar-dot td-green"></span><span class="titlebar-name">veloxvid — acompanhar</span></div>
+        <div class="mockup-body">
+          <div class="mock-job">
+            <div class="mock-job-head"><span class="mock-job-title">A história do café</span><span class="mock-pill"><span class="dot"></span>produzindo</span></div>
+            <div class="mock-job-meta">canal Curiosidades · estilo Atlas</div>
+            <div class="waveform" id="waveform"></div>
+            <div class="mock-progress"><div class="mock-progress-track"><span></span></div><span class="mock-progress-val">58%</span></div>
+          </div>
+          <div class="mock-stages">
+            <div class="mock-stage done"><div class="mock-stage-head"><span class="mock-stage-mark">✓</span>Preparação</div><div class="mock-stage-detail">narração, transcrição e plano</div></div>
+            <div class="mock-stage active"><div class="mock-stage-head"><span class="mock-stage-mark"></span>Vídeos reais</div><div class="mock-stage-detail">9 de 14 cenas avaliadas</div></div>
+            <div class="mock-stage pending"><div class="mock-stage-head"><span class="mock-stage-mark"></span>Imagens de IA</div><div class="mock-stage-detail">depois da busca</div></div>
+            <div class="mock-stage pending"><div class="mock-stage-head"><span class="mock-stage-mark"></span>Montagem</div><div class="mock-stage-detail">no fim</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="mockup-badge"><span class="badge-val">17</span><span class="badge-lbl">estilos visuais</span></div>
+    </div>
+  </div>
+  <script>
+    var wf = document.getElementById('waveform');
+    [20,35,55,70,45,80,60,90,65,50,85,40,75,55,70,45,60,80,35,65,50,75,40,85,55,70,45,60,35,80].forEach(function (h) {
+      var b = document.createElement('div'); b.className = 'waveform-bar'; b.style.height = h + '%'; wf.appendChild(b);
+    });
+  </script>
+</body></html>

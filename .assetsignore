@@ -1,0 +1,23 @@
+# Arquivos do repositório que NÃO devem ser publicados no site.
+# Mesmo formato do .gitignore. Tudo o que não está aqui vai ao ar.
+
+# Controle de versão e ferramentas
+.git
+.gitignore
+.assetsignore
+.claude
+.vscode
+.idea
+.wrangler
+node_modules
+wrangler.jsonc
+wrangler.json
+wrangler.toml
+package.json
+package-lock.json
+
+# Documentos internos
+*.md
+
+# Arquivos-fonte de design (logo original, 4,7 MB)
+design

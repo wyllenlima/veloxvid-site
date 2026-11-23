@@ -3,1223 +3,102 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeloxVid — Do Áudio ao Vídeo, Automaticamente</title>
-  <meta name="description" content="Transcreva seu áudio localmente, gere vídeos no VEO3 em massa e sincronize tudo no editor com minutagem precisa. Windows 10/11." />
+  <title>VeloxVid — Do roteiro ao vídeo pronto, automaticamente</title>
+  <meta name="description" content="Cole o roteiro e o VeloxVid narra, busca as imagens de cada cena, aplica o estilo do canal e monta o vídeo no seu PC. Para canais do YouTube. Windows 10/11." />
+  <link rel="canonical" href="https://veloxvid.com/" />
   <meta name="theme-color" content="#0e1117" />
-  <link rel="icon" href="/icon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
 
-  <style>
-    /* ─── Reset & Base ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="VeloxVid" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="https://veloxvid.com/" />
+  <meta property="og:title" content="VeloxVid — Do roteiro ao vídeo pronto, automaticamente" />
+  <meta property="og:description" content="Cole o roteiro e o VeloxVid narra, busca as imagens de cada cena, aplica o estilo do canal e monta o vídeo no seu PC. Para canais do YouTube." />
+  <meta property="og:image" content="https://veloxvid.com/assets/img/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="VeloxVid: do roteiro ao vídeo pronto, automaticamente" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VeloxVid — Do roteiro ao vídeo pronto, automaticamente" />
+  <meta name="twitter:description" content="Cole o roteiro e o VeloxVid narra, busca as imagens de cada cena, aplica o estilo do canal e monta o vídeo no seu PC." />
+  <meta name="twitter:image" content="https://veloxvid.com/assets/img/og-cover.jpg" />
 
-    :root {
-      --bg:         #0e1117;
-      --bg-card:    #14171f;
-      --bg-card2:   #1a1d27;
-      --border:     rgba(255,255,255,0.07);
-      --border-mid: rgba(255,255,255,0.12);
-      --txt:        #ffffff;
-      --txt-2:      rgba(255,255,255,0.5);
-      --txt-3:      rgba(255,255,255,0.28);
-      --blue:       #4A9EFF;
-      --blue-dim:   rgba(74,158,255,0.15);
-      --blue-glow:  rgba(74,158,255,0.35);
-      --green:      #4CAF50;
-      --red:        #FF5A5A;
-      --radius:     12px;
-      --radius-lg:  20px;
-    }
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    html { scroll-behavior: smooth; }
+  <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts.css" />
+  <link rel="stylesheet" href="/assets/site.css" />
+  <script>document.documentElement.classList.add('js');</script>
 
-    body {
-      background: var(--bg);
-      color: var(--txt);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    /* ─── Grain overlay ─── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-      opacity: 0.025;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ─── Typography ─── */
-    .font-display { font-family: 'Bricolage Grotesque', sans-serif; }
-    .font-mono    { font-family: 'JetBrains Mono', monospace; }
-
-    h1,h2,h3 { font-family: 'Bricolage Grotesque', sans-serif; line-height: 1.08; letter-spacing: -0.03em; }
-
-    /* ─── Layout helpers ─── */
-    .container {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    section { position: relative; }
-
-    /* ─── Nav ─── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      border-bottom: 1px solid transparent;
-      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
-    }
-    nav.scrolled {
-      background: rgba(14,17,23,0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-color: var(--border);
-    }
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-    }
-    .nav-logo {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800;
-      font-size: 1.25rem;
-      color: var(--txt);
-      text-decoration: none;
-      letter-spacing: -0.03em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .nav-logo img {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-    }
-    .nav-logo span { color: var(--blue); }
-    .nav-links {
-      display: flex;
-      gap: 32px;
-      list-style: none;
-    }
-    .nav-links a {
-      color: var(--txt-2);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--txt); }
-    .nav-cta {
-      background: var(--blue);
-      color: #fff !important;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-weight: 600 !important;
-      font-size: 0.875rem !important;
-      transition: opacity 0.2s, transform 0.2s !important;
-    }
-    .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); color: #fff !important; }
-
-    /* ─── Nav user badge ─── */
-    .nav-user {
-      display: flex; align-items: center; gap: 8px;
-      text-decoration: none; color: var(--txt-2);
-      font-size: 0.875rem; font-weight: 500;
-      transition: color 0.2s;
-    }
-    .nav-user:hover { color: var(--txt); }
-    .nav-user-avatar {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--blue-dim);
-      border: 1px solid rgba(74,158,255,0.35);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 700; font-size: 0.72rem;
-      color: var(--blue);
-    }
-
-    /* ─── Hamburger ─── */
-    .nav-hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      background: none; border: none;
-      cursor: pointer; padding: 6px;
-      z-index: 101;
-    }
-    .nav-hamburger span {
-      display: block; width: 22px; height: 2px;
-      background: var(--txt-2);
-      border-radius: 2px;
-      transition: transform 0.3s, opacity 0.3s, background 0.2s;
-    }
-    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--txt); }
-    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
-    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--txt); }
-
-    /* Mobile nav dropdown */
-    @media (max-width: 900px) {
-      .nav-links {
-        position: fixed;
-        top: 64px; left: 0; right: 0;
-        background: rgba(14,17,23,0.97);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--border);
-        flex-direction: column;
-        gap: 0; padding: 8px 0 16px;
-        display: none !important;
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://veloxvid.com/#org",
+        "name": "VeloxVid",
+        "url": "https://veloxvid.com/",
+        "logo": "https://veloxvid.com/logo.png",
+        "email": "contato@veloxvid.com"
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://veloxvid.com/#site",
+        "url": "https://veloxvid.com/",
+        "name": "VeloxVid",
+        "inLanguage": "pt-BR",
+        "publisher": { "@id": "https://veloxvid.com/#org" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://veloxvid.com/#app",
+        "name": "VeloxVid",
+        "operatingSystem": "Windows 10, Windows 11",
+        "applicationCategory": "MultimediaApplication",
+        "description": "Aplicativo para Windows que transforma um roteiro em vídeo montado: narra, busca o visual de cada cena, aplica o estilo do canal e gera o MP4 no computador do usuário.",
+        "url": "https://veloxvid.com/",
+        "image": "https://veloxvid.com/assets/img/og-cover.jpg",
+        "publisher": { "@id": "https://veloxvid.com/#org" },
+        "offers": [
+          { "@type": "Offer", "name": "Mensal", "price": "299.00", "priceCurrency": "BRL", "url": "https://veloxvid.com/planos" },
+          { "@type": "Offer", "name": "Trimestral", "price": "837.00", "priceCurrency": "BRL", "url": "https://veloxvid.com/planos" },
+          { "@type": "Offer", "name": "Anual", "price": "2988.00", "priceCurrency": "BRL", "url": "https://veloxvid.com/planos" }
+        ]
       }
-      .nav-links.mobile-open { display: flex !important; }
-      .nav-links li { width: 100%; }
-      .nav-links a {
-        display: block; padding: 12px 24px;
-        font-size: 1rem;
-      }
-      .nav-links .nav-cta {
-        margin: 8px 24px 0;
-        display: block; text-align: center;
-        border-radius: 10px;
-      }
-    }
-
-    /* ─── Hero ─── */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-top: 64px;
-      overflow: hidden;
-    }
-
-    /* Radial gradient bg */
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 800px;
-      height: 800px;
-      background: radial-gradient(ellipse at center, rgba(74,158,255,0.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      padding: 80px 0;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--blue-dim);
-      border: 1px solid rgba(74,158,255,0.3);
-      border-radius: 100px;
-      padding: 6px 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--blue);
-      margin-bottom: 24px;
-      letter-spacing: 0.04em;
-    }
-    .hero-badge .dot {
-      width: 6px; height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76,175,80,0.4); }
-      50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76,175,80,0); }
-    }
-
-    .hero h1 {
-      font-size: clamp(2.6rem, 5vw, 4rem);
-      font-weight: 800;
-      margin-bottom: 24px;
-      line-height: 1.05;
-    }
-    .hero h1 .accent { color: var(--blue); }
-    .hero h1 .line-2 { display: block; }
-
-    .hero-sub {
-      font-size: 1.1rem;
-      color: var(--txt-2);
-      max-width: 440px;
-      line-height: 1.65;
-      margin-bottom: 40px;
-      font-weight: 300;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--blue);
-      color: #fff;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 14px 28px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-      box-shadow: 0 0 0 rgba(74,158,255,0);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(74,158,255,0.4);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      color: var(--txt-2);
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 14px 28px;
-      border-radius: var(--radius);
-      text-decoration: none;
-      border: 1px solid var(--border-mid);
-      cursor: pointer;
-      transition: color 0.2s, border-color 0.2s, transform 0.2s;
-    }
-    .btn-secondary:hover {
-      color: var(--txt);
-      border-color: rgba(255,255,255,0.25);
-      transform: translateY(-2px);
-    }
-
-    .hero-note {
-      margin-top: 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--txt-3);
-      letter-spacing: 0.03em;
-    }
-
-    /* ─── Waveform visual ─── */
-    .hero-visual {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mockup-wrap {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-    }
-
-    .mockup-window {
-      background: var(--bg-card);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      box-shadow:
-        0 0 0 1px rgba(74,158,255,0.08),
-        0 40px 80px rgba(0,0,0,0.6),
-        0 0 120px rgba(74,158,255,0.08);
-    }
-
-    .mockup-titlebar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255,255,255,0.02);
-    }
-    .titlebar-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-    }
-    .td-red   { background: #ff5f57; }
-    .td-amber { background: #febc2e; }
-    .td-green { background: #28c840; }
-    .titlebar-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--txt-3);
-      margin-left: 8px;
-    }
-
-    .mockup-body { padding: 20px; }
-
-    .mock-file-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      background: rgba(74,158,255,0.06);
-      border: 1px solid rgba(74,158,255,0.15);
-      border-radius: 8px;
-      margin-bottom: 16px;
-    }
-    .mock-file-icon {
-      font-size: 1.1rem;
-    }
-    .mock-file-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--blue);
-    }
-    .mock-file-size {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--txt-3);
-      margin-left: auto;
-    }
-
-    /* Waveform bars */
-    .waveform {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      height: 48px;
-      padding: 0 4px;
-      margin-bottom: 16px;
-    }
-    .waveform-bar {
-      flex: 1;
-      background: var(--blue);
-      border-radius: 2px;
-      opacity: 0.8;
-      animation: wave var(--d, 1.2s) ease-in-out infinite alternate;
-      animation-delay: var(--delay, 0s);
-    }
-    @keyframes wave {
-      from { transform: scaleY(0.2); opacity: 0.4; }
-      to   { transform: scaleY(1);   opacity: 0.9; }
-    }
-
-    .mock-transcript {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 14px;
-    }
-    .mock-ts-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-      align-items: flex-start;
-    }
-    .mock-ts-row:last-child { margin-bottom: 0; }
-    .mock-ts-time {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--blue);
-      padding-top: 2px;
-      white-space: nowrap;
-    }
-    .mock-ts-text {
-      font-size: 0.78rem;
-      color: var(--txt-2);
-      line-height: 1.5;
-    }
-    .mock-ts-text .hl { color: var(--txt); font-weight: 500; }
-
-    /* Floating badge */
-    .mockup-badge {
-      position: absolute;
-      bottom: -16px;
-      right: -20px;
-      background: var(--bg-card2);
-      border: 1px solid var(--border-mid);
-      border-radius: var(--radius);
-      padding: 12px 16px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .mockup-badge .badge-val {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--green);
-      display: block;
-      line-height: 1;
-    }
-    .mockup-badge .badge-lbl {
-      color: var(--txt-3);
-      font-size: 0.68rem;
-      margin-top: 3px;
-      display: block;
-    }
-
-    /* ─── Trust bar ─── */
-    .trust-bar {
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      padding: 20px 0;
-      overflow: hidden;
-    }
-    .trust-inner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      flex-wrap: wrap;
-    }
-    .trust-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 28px;
-      color: var(--txt-2);
-      font-size: 0.82rem;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .trust-divider {
-      width: 1px;
-      height: 16px;
-      background: var(--border-mid);
-    }
-    .trust-icon { color: var(--blue); font-size: 1rem; }
-
-    /* ─── Section heading ─── */
-    .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--blue);
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
-      font-weight: 800;
-      margin-bottom: 16px;
-    }
-    .section-sub {
-      font-size: 1.05rem;
-      color: var(--txt-2);
-      max-width: 520px;
-      line-height: 1.65;
-      font-weight: 300;
-    }
-
-    /* ─── Features ─── */
-    .features {
-      padding: 120px 0 80px;
-    }
-    .features-head {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .features-head .section-sub { margin: 0 auto; }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
-      cursor: default;
-    }
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at top left, rgba(74,158,255,0.07) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .feature-card:hover {
-      border-color: rgba(74,158,255,0.35);
-      box-shadow: 0 0 32px rgba(74,158,255,0.12), 0 8px 32px rgba(0,0,0,0.3);
-      transform: translateY(-3px);
-    }
-    .feature-card:hover::before { opacity: 1; }
-
-    /* span 2 cols for 5th card */
-    .feature-card.wide {
-      grid-column: span 2;
-    }
-
-    .feat-icon {
-      width: 44px; height: 44px;
-      border-radius: 10px;
-      background: var(--blue-dim);
-      border: 1px solid rgba(74,158,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 20px;
-      position: relative; z-index: 1;
-    }
-    .feat-title {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      position: relative; z-index: 1;
-    }
-    .feat-desc {
-      font-size: 0.88rem;
-      color: var(--txt-2);
-      line-height: 1.65;
-      font-weight: 300;
-      position: relative; z-index: 1;
-    }
-    .feat-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 14px;
-      position: relative; z-index: 1;
-    }
-    .feat-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.66rem;
-      color: var(--txt-3);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 3px 8px;
-    }
-
-    /* ─── Steps ─── */
-    .steps-section {
-      padding: 80px 0;
-    }
-    .steps-head {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .steps-head .section-sub { margin: 0 auto; }
-
-    .steps-track {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      position: relative;
-    }
-    .steps-track::before {
-      content: '';
-      position: absolute;
-      top: 28px;
-      left: calc(16.66% + 16px);
-      right: calc(16.66% + 16px);
-      height: 1px;
-      background: linear-gradient(to right, var(--blue), rgba(74,158,255,0.3), var(--blue));
-      opacity: 0.4;
-    }
-
-    .step-item {
-      text-align: center;
-      padding: 0 24px;
-    }
-    .step-num {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: var(--bg-card);
-      border: 1px solid var(--border-mid);
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800;
-      font-size: 1.2rem;
-      color: var(--blue);
-      position: relative;
-    }
-    .step-num::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      background: transparent;
-      border: 1px solid rgba(74,158,255,0.2);
-    }
-    .step-title {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .step-desc {
-      font-size: 0.88rem;
-      color: var(--txt-2);
-      line-height: 1.65;
-      font-weight: 300;
-    }
-
-    /* ─── Privacy section ─── */
-    .privacy-section {
-      padding: 80px 0;
-    }
-    .privacy-inner {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 60px 64px;
-      position: relative;
-      overflow: hidden;
-    }
-    .privacy-inner::before {
-      content: '';
-      position: absolute;
-      right: -100px; top: -100px;
-      width: 400px; height: 400px;
-      background: radial-gradient(ellipse, rgba(74,158,255,0.06) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .privacy-list {
-      list-style: none;
-      margin-top: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-    .privacy-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 0.93rem;
-      color: var(--txt-2);
-    }
-    .privacy-item .check {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: rgba(76,175,80,0.15);
-      border: 1px solid rgba(76,175,80,0.4);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.65rem;
-      color: var(--green);
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-
-    /* Compare cards */
-    .compare-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .compare-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-    }
-    .compare-card.winner {
-      background: rgba(74,158,255,0.07);
-      border-color: rgba(74,158,255,0.3);
-    }
-    .compare-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 10px;
-    }
-    .compare-label {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-    .compare-badge-win {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--blue);
-      background: var(--blue-dim);
-      border: 1px solid rgba(74,158,255,0.3);
-      border-radius: 4px;
-      padding: 2px 8px;
-    }
-    .compare-badge-lose {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--txt-3);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 8px;
-    }
-    .compare-dots {
-      display: flex;
-      gap: 6px;
-    }
-    .compare-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-    }
-    .compare-dot.on  { background: var(--green); }
-    .compare-dot.off { background: rgba(255,255,255,0.1); }
-
-    /* ─── Pricing ─── */
-    .pricing-section {
-      padding: 80px 0 80px;
-    }
-    .pricing-head {
-      text-align: center;
-      margin-bottom: 64px;
-    }
-    .pricing-head .section-sub { margin: 0 auto; }
-
-    /* Shared features block */
-    .pricing-features-shared {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 28px 32px;
-      max-width: 960px;
-      margin: 0 auto 32px;
-    }
-    .pricing-requirements {
-      max-width: 960px;
-      margin: 20px auto 24px;
-      color: var(--txt-2);
-      font-size: 0.82rem;
-      line-height: 1.5;
-      text-align: center;
-    }
-    .shared-features-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--txt-3);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .shared-features-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px 16px;
-    }
-    .shared-feat {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.82rem;
-      color: var(--txt-2);
-      font-weight: 400;
-    }
-    .sf-icon { font-size: 0.95rem; flex-shrink: 0; }
-
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      max-width: 960px;
-      margin: 0 auto;
-    }
-
-    .pricing-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 32px 28px;
-      position: relative;
-      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
-    }
-    .pricing-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
-    .pricing-card.featured {
-      border-color: rgba(76,175,80,0.4);
-      background: linear-gradient(145deg, rgba(76,175,80,0.05) 0%, var(--bg-card) 60%);
-    }
-    .pricing-card.featured:hover {
-      box-shadow: 0 12px 40px rgba(76,175,80,0.1);
-    }
-
-    .pricing-badge {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.65rem;
-      font-weight: 500;
-      padding: 4px 14px;
-      border-radius: 100px;
-      white-space: nowrap;
-      letter-spacing: 0.05em;
-    }
-    .pricing-badge.best {
-      background: var(--green);
-      color: #fff;
-    }
-    .pricing-badge.discount {
-      background: rgba(76,175,80,0.15);
-      color: var(--green);
-      border: 1px solid rgba(76,175,80,0.35);
-    }
-
-    .plan-name {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
-      margin-bottom: 4px;
-    }
-    .plan-cycle {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--txt-3);
-      margin-bottom: 24px;
-      letter-spacing: 0.04em;
-    }
-    .plan-price {
-      margin-bottom: 6px;
-    }
-    .plan-price-row {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-    }
-    .plan-price .currency {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--txt-2);
-    }
-    .plan-price .amount {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 2.6rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .plan-price .period {
-      font-size: 0.78rem;
-      color: var(--txt-3);
-    }
-    .plan-total {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--txt-3);
-      margin-bottom: 28px;
-    }
-
-    .plan-features {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 28px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-    .plan-feature {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.83rem;
-      color: var(--txt-2);
-      font-weight: 300;
-    }
-    .plan-feature .pf-icon {
-      color: var(--green);
-      flex-shrink: 0;
-      font-size: 0.75rem;
-      margin-top: 2px;
-    }
-
-    .btn-plan {
-      display: block;
-      width: 100%;
-      text-align: center;
-      padding: 13px;
-      border-radius: var(--radius);
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 700;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-    }
-    .btn-plan.primary {
-      background: var(--blue);
-      color: #fff;
-    }
-    .btn-plan.primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(74,158,255,0.35);
-    }
-    .btn-plan.outline {
-      background: transparent;
-      color: var(--txt-2);
-      border: 1px solid var(--border-mid);
-    }
-    .btn-plan.outline:hover {
-      color: var(--txt);
-      border-color: rgba(255,255,255,0.25);
-      transform: translateY(-2px);
-    }
-
-    /* ─── FAQ ─── */
-    .faq-section {
-      padding: 40px 0 120px;
-    }
-    .faq-head {
-      text-align: center;
-      margin-bottom: 56px;
-    }
-    .faq-list {
-      max-width: 720px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .faq-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .faq-item.open {
-      border-color: rgba(74,158,255,0.25);
-    }
-    .faq-q {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 24px;
-      background: none;
-      border: none;
-      color: var(--txt);
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: left;
-      gap: 16px;
-    }
-    .faq-arrow {
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem;
-      flex-shrink: 0;
-      color: var(--blue);
-      transition: transform 0.3s, background 0.2s;
-    }
-    .faq-item.open .faq-arrow {
-      transform: rotate(45deg);
-      background: var(--blue-dim);
-    }
-    .faq-a {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.35s ease;
-    }
-    .faq-a-inner {
-      padding: 0 24px 20px;
-      font-size: 0.88rem;
-      color: var(--txt-2);
-      line-height: 1.7;
-      font-weight: 300;
-    }
-
-    /* ─── CTA Final ─── */
-    .cta-section {
-      padding: 80px 0 120px;
-    }
-    .cta-box {
-      text-align: center;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 80px 48px;
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-box::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 600px; height: 300px;
-      background: radial-gradient(ellipse, rgba(74,158,255,0.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta-box h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 16px;
-      position: relative; z-index: 1;
-    }
-    .cta-box p {
-      font-size: 1.05rem;
-      color: var(--txt-2);
-      margin-bottom: 40px;
-      font-weight: 300;
-      position: relative; z-index: 1;
-    }
-    .cta-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-      position: relative; z-index: 1;
-    }
-    .cta-note {
-      margin-top: 20px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--txt-3);
-      position: relative; z-index: 1;
-    }
-
-    /* ─── Footer ─── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 0 48px;
-    }
-    .footer-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .footer-logo {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--txt);
-      text-decoration: none;
-    }
-    .footer-logo span { color: var(--blue); }
-
-    .footer-links {
-      display: flex;
-      gap: 24px;
-      list-style: none;
-      flex-wrap: wrap;
-    }
-    .footer-links a {
-      font-size: 0.82rem;
-      color: var(--txt-3);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .footer-links a:hover { color: var(--txt-2); }
-
-    .footer-copy {
-      font-size: 0.78rem;
-      color: var(--txt-3);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* ─── Animations on load ─── */
-    .fade-up {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-    .fade-up.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .fade-up:nth-child(2) { transition-delay: 0.1s; }
-    .fade-up:nth-child(3) { transition-delay: 0.2s; }
-    .fade-up:nth-child(4) { transition-delay: 0.3s; }
-    .fade-up:nth-child(5) { transition-delay: 0.4s; }
-
-    /* ─── Responsive ─── */
-    @media (max-width: 900px) {
-      .hero-content {
-        grid-template-columns: 1fr;
-        gap: 48px;
-        text-align: center;
-        padding: 60px 0;
-      }
-      .hero-badge { margin-left: auto; margin-right: auto; }
-      .hero-sub { margin-left: auto; margin-right: auto; }
-      .hero-actions { justify-content: center; }
-      .hero-note { text-align: center; }
-      .mockup-wrap { max-width: 400px; margin: 0 auto; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .feature-card.wide { grid-column: span 1; }
-      .steps-track::before { display: none; }
-      .steps-track { grid-template-columns: 1fr; gap: 40px; }
-      .privacy-inner { grid-template-columns: 1fr; gap: 40px; padding: 40px 28px; }
-      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-      .shared-features-grid { grid-template-columns: repeat(2, 1fr); }
-      .pricing-features-shared { padding: 22px 20px; }
-      .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
-      .nav-hamburger { display: flex; }
-    }
-    @media (max-width: 560px) {
-      .features-grid { grid-template-columns: 1fr; }
-      .feature-card.wide { grid-column: span 1; }
-      .trust-item { padding: 6px 14px; font-size: 0.76rem; }
-    }
-  </style>
+    ]
+  }
+  </script>
 </head>
 
 <body>
 
   <!-- ─── NAV ─── -->
-  <nav id="nav">
+  <nav id="nav" aria-label="Principal">
     <div class="container">
       <div class="nav-inner">
-        <a href="#" class="nav-logo"><img src="/icon.svg" alt="VeloxVid" />Velox<span>Vid</span></a>
+        <a href="#" class="nav-logo" aria-label="VeloxVid, início"><img src="/assets/img/logo-64.png" alt="" width="28" height="28" />Velox<span>Vid</span></a>
         <ul class="nav-links" id="navLinks">
-          <li><a href="#features">Ferramentas</a></li>
           <li><a href="#how">Como funciona</a></li>
+          <li><a href="#features">Recursos</a></li>
+          <li><a href="#requisitos">Requisitos</a></li>
           <li><a href="#pricing">Planos</a></li>
           <li><a href="#faq">FAQ</a></li>
-          <li id="navAuthItem"><a href="/conta.html" id="navAuthLink">Entrar</a></li>
-          <li id="navLogoutItem" style="display:none"><a href="#" onclick="navLogout();return false" id="navLogoutLink">Sair</a></li>
-          <li id="navSubscribeItem"><a href="#" onclick="openCheckout('anual');return false" class="nav-cta">Assinar Agora</a></li>
+          <li id="navAuthItem"><a href="/conta" id="navAuthLink">Entrar</a></li>
+          <li id="navLogoutItem" style="display:none"><a href="#" id="navLogoutLink">Sair</a></li>
+          <li id="navSubscribeItem"><a href="/planos" data-checkout="anual" class="nav-cta">Assinar agora</a></li>
         </ul>
-        <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+        <button class="nav-hamburger" id="navHamburger" type="button" aria-label="Menu" aria-controls="navLinks" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
       </div>
     </div>
   </nav>
+
+  <main>
 
   <!-- ─── HERO ─── -->
   <section class="hero" id="hero">
@@ -1228,60 +107,70 @@
         <div class="hero-left">
           <div class="hero-badge">
             <span class="dot"></span>
-            WINDOWS · TRANSCRIÇÃO LOCAL · GERAÇÃO VEO3
+            WINDOWS · PRODUÇÃO AUTOMÁTICA · NO SEU COMPUTADOR
           </div>
           <h1>
-            Transcreva local.<br>
-            <span class="accent">Gere vídeos</span>
-            <span class="line-2">automaticamente.</span>
+            Do roteiro ao<br>
+            <span class="accent">vídeo pronto.</span>
+            <span class="line-2">Automaticamente.</span>
           </h1>
           <p class="hero-sub">
-            Seu áudio é transcrito localmente — sem sair do HD. O VeloxVid automatiza a geração de vídeos no VEO3 com minutagem precisa, pronta para sincronizar áudio e vídeo no seu editor.
+            Cole o roteiro ou envie a narração. O VeloxVid narra, encontra o visual de cada cena, aplica o estilo do seu canal e monta o vídeo no seu computador.
           </p>
           <div class="hero-actions">
             <a href="#" data-download class="btn-primary">
-              ↓ Baixar Grátis
+              ↓ Baixar para Windows
             </a>
             <a href="#pricing" class="btn-secondary">Ver planos →</a>
           </div>
-          <p class="hero-note">Windows 10/11 · 64-bit · <span class="app-version">-</span></p>
+          <p class="hero-note">Windows 10/11 · 64-bit · <span class="app-version">-</span> · requer assinatura</p>
         </div>
 
         <div class="hero-visual">
-          <div class="mockup-wrap">
-            <div class="mockup-window">
+          <div class="mockup-wrap" role="img" aria-label="Ilustração da tela Acompanhar do VeloxVid: um vídeo em produção, com as etapas Preparação, Vídeos reais, Imagens de IA e Montagem">
+            <div class="mockup-window" aria-hidden="true">
               <div class="mockup-titlebar">
                 <span class="titlebar-dot td-red"></span>
                 <span class="titlebar-dot td-amber"></span>
                 <span class="titlebar-dot td-green"></span>
-                <span class="titlebar-name">veloxvid — transcrição</span>
+                <span class="titlebar-name">veloxvid — acompanhar</span>
               </div>
               <div class="mockup-body">
-                <div class="mock-file-row">
-                  <span class="mock-file-icon">🎙</span>
-                  <span class="mock-file-name">podcast_ep42.mp3</span>
-                  <span class="mock-file-size">128 MB</span>
+                <div class="mock-job">
+                  <div class="mock-job-head">
+                    <span class="mock-job-title">A história do café</span>
+                    <span class="mock-pill"><span class="dot"></span>produzindo</span>
+                  </div>
+                  <div class="mock-job-meta">canal Curiosidades · estilo Atlas</div>
+                  <div class="waveform" id="waveform"></div>
+                  <div class="mock-progress">
+                    <div class="mock-progress-track"><span></span></div>
+                    <span class="mock-progress-val">58%</span>
+                  </div>
                 </div>
-                <div class="waveform" id="waveform"></div>
-                <div class="mock-transcript">
-                  <div class="mock-ts-row">
-                    <span class="mock-ts-time">[00:01]</span>
-                    <span class="mock-ts-text"><span class="hl">Hoje vamos falar sobre</span> criação de conteúdo com IA...</span>
+                <div class="mock-stages">
+                  <div class="mock-stage done">
+                    <div class="mock-stage-head"><span class="mock-stage-mark">✓</span>Preparação</div>
+                    <div class="mock-stage-detail">narração, transcrição e plano</div>
                   </div>
-                  <div class="mock-ts-row">
-                    <span class="mock-ts-time">[00:14]</span>
-                    <span class="mock-ts-text">Áudio transcrito local. <span class="hl">Vídeos gerados</span> no VEO3 automaticamente...</span>
+                  <div class="mock-stage active">
+                    <div class="mock-stage-head"><span class="mock-stage-mark"></span>Vídeos reais</div>
+                    <div class="mock-stage-detail">9 de 14 cenas avaliadas</div>
                   </div>
-                  <div class="mock-ts-row">
-                    <span class="mock-ts-time">[00:28]</span>
-                    <span class="mock-ts-text"><span class="hl">Faster-whisper</span> no seu hardware. Sem limites.</span>
+                  <div class="mock-stage pending">
+                    <div class="mock-stage-head"><span class="mock-stage-mark"></span>Imagens de IA</div>
+                    <div class="mock-stage-detail">depois da busca</div>
+                  </div>
+                  <div class="mock-stage pending">
+                    <div class="mock-stage-head"><span class="mock-stage-mark"></span>Montagem</div>
+                    <div class="mock-stage-detail">no fim</div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="mockup-badge">
-              <span class="badge-val">100%</span>
-              <span class="badge-lbl">offline · sem nuvem</span>
+            <div class="mockup-badge" aria-hidden="true">
+              <span class="badge-val">17</span>
+              <span class="badge-lbl">estilos visuais</span>
             </div>
           </div>
         </div>
@@ -1292,228 +181,335 @@
   <!-- ─── TRUST BAR ─── -->
   <div class="trust-bar">
     <div class="container">
-      <div class="trust-inner">
-        <div class="trust-item">
-          <span class="trust-icon">⚡</span>
-          Transcrição 100% local
-        </div>
-        <div class="trust-divider"></div>
-        <div class="trust-item">
-          <span class="trust-icon">∞</span>
-          Sem limite de arquivos
-        </div>
-        <div class="trust-divider"></div>
-        <div class="trust-item">
-          <span class="trust-icon">🔄</span>
-          Atualização automática
-        </div>
-        <div class="trust-divider"></div>
-        <div class="trust-item">
-          <span class="trust-icon">🎬</span>
-          MP3 · WAV · MP4 · M4A e mais
-        </div>
-      </div>
+      <ul class="trust-inner">
+        <li class="trust-item"><span class="trust-icon" aria-hidden="true">💻</span>Roda no seu Windows</li>
+        <li class="trust-item"><span class="trust-icon" aria-hidden="true">🎨</span>17 estilos visuais</li>
+        <li class="trust-item"><span class="trust-icon" aria-hidden="true">✂️</span>Editor de vídeo incluído</li>
+        <li class="trust-item"><span class="trust-icon" aria-hidden="true">🔑</span>Suas contas, suas chaves</li>
+      </ul>
     </div>
   </div>
 
-  <!-- ─── FEATURES ─── -->
+  <!-- ─── COMO FUNCIONA ─── -->
+  <section class="steps-section" id="how">
+    <div class="container">
+      <div class="section-head fade-up">
+        <div class="section-label">// como funciona</div>
+        <h2 class="section-title">Quatro etapas. Um vídeo pronto.</h2>
+        <p class="section-sub">Você entra com o texto e as escolhas do canal. O resto é com o Robô.</p>
+      </div>
+
+      <ol class="steps-track">
+        <li class="step-item fade-up">
+          <div class="step-num" aria-hidden="true">1</div>
+          <h3 class="step-title">Cole o roteiro</h3>
+          <p class="step-desc">Ou envie a narração gravada. Não tem roteiro? A ferramenta Roteiro escreve um com o seu ChatGPT ou Claude.</p>
+        </li>
+        <li class="step-item fade-up">
+          <div class="step-num" aria-hidden="true">2</div>
+          <h3 class="step-title">Escolha o canal</h3>
+          <p class="step-desc">Estilo, cores, trilha e apresentador ficam guardados por canal.</p>
+        </li>
+        <li class="step-item fade-up">
+          <div class="step-num" aria-hidden="true">3</div>
+          <h3 class="step-title">O Robô produz</h3>
+          <p class="step-desc">Narra, sincroniza cada palavra, busca o visual de cada cena e monta. Você acompanha cena a cena.</p>
+        </li>
+        <li class="step-item fade-up">
+          <div class="step-num" aria-hidden="true">4</div>
+          <h3 class="step-title">Revise e publique</h3>
+          <p class="step-desc">Abra o vídeo no editor, ajuste o que quiser e gere as tags e a descrição.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ─── PRODUÇÃO AUTOMÁTICA ─── -->
   <section class="features" id="features">
     <div class="container">
-      <div class="features-head fade-up">
-        <div class="section-label">// ferramentas</div>
-        <h2 class="section-title">Mais conteúdo.<br>Menos retrabalho.</h2>
-        <p class="section-sub">Seis ferramentas integradas para levar seu áudio bruto ao vídeo sincronizado no editor.</p>
+      <div class="section-head fade-up">
+        <div class="section-label">// produção automática</div>
+        <h2 class="section-title">Tudo o que um editor faria,<br>cena por cena.</h2>
+        <p class="section-sub">Da voz ao corte final, o VeloxVid cuida de cada parte do vídeo. E mostra quanto cada produção custou.</p>
       </div>
 
       <div class="features-grid">
-        <div class="feature-card fade-up">
-          <div class="feat-icon">🎙</div>
-          <div class="feat-title">Transcrição Inteligente</div>
-          <p class="feat-desc">Converte áudio e vídeo em texto com faster-whisper, diretamente na sua CPU. Divide em cenas com timestamps precisos.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">faster-whisper</span>
-            <span class="feat-tag">100% offline</span>
-            <span class="feat-tag">timestamps</span>
-          </div>
-        </div>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🗣</div>
+          <h3 class="feat-title">Narração</h3>
+          <p class="feat-desc">Voz sintética no idioma do roteiro, ou o seu próprio áudio.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">voz sintética</li>
+            <li class="feat-tag">ou a sua gravação</li>
+          </ul>
+        </article>
 
-        <div class="feature-card fade-up">
-          <div class="feat-icon">✍️</div>
-          <div class="feat-title">Gerador de Roteiro VEO3</div>
-          <p class="feat-desc">Transforma a transcrição em prompts otimizados para o Google VEO3. Formato certo, na primeira tentativa.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">Google VEO3</span>
-            <span class="feat-tag">prompts otimizados</span>
-          </div>
-        </div>
+        <article class="feature-card wide fade-up">
+          <div class="feat-icon" aria-hidden="true">🔎</div>
+          <h3 class="feat-title">Visual para cada cena</h3>
+          <p class="feat-desc">Busca material real em acervos de fotos e vídeos e, quando falta, gera a imagem com IA. Cada cena do roteiro recebe o seu próprio visual.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">acervos de fotos e vídeos</li>
+            <li class="feat-tag">imagens por IA</li>
+            <li class="feat-tag">clipes por IA (opcional)</li>
+          </ul>
+        </article>
 
-        <div class="feature-card fade-up">
-          <div class="feat-icon">🎥</div>
-          <div class="feat-title">Gerador de Vídeos VEO3</div>
-          <p class="feat-desc">Envia prompts em massa para o VEO3 e automatiza a geração. Retorna cenas com minutagem precisa, prontas para sincronizar áudio e vídeo no seu editor.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">batch processing</span>
-            <span class="feat-tag">VEO3</span>
-            <span class="feat-tag">minutagem</span>
-          </div>
-        </div>
+        <article class="feature-card wide fade-up">
+          <div class="feat-icon" aria-hidden="true">🎨</div>
+          <h3 class="feat-title">Estilo do canal</h3>
+          <p class="feat-desc">17 estilos, com peças gráficas, trilhas e efeitos sonoros aplicados sozinhos. Cada canal guarda o seu.</p>
+          <ul class="feat-tags styles" aria-label="Os 17 estilos">
+            <li class="feat-tag">Dossiê</li>
+            <li class="feat-tag">Kinético</li>
+            <li class="feat-tag">Broadcast</li>
+            <li class="feat-tag">Cinema</li>
+            <li class="feat-tag">Projeto</li>
+            <li class="feat-tag">Edição Extra</li>
+            <li class="feat-tag">Arcade</li>
+            <li class="feat-tag">Atlas</li>
+            <li class="feat-tag">Terminal</li>
+            <li class="feat-tag">Pregão</li>
+            <li class="feat-tag">Laboratório</li>
+            <li class="feat-tag">Linha do Tempo</li>
+            <li class="feat-tag">Placar</li>
+            <li class="feat-tag">Órbita</li>
+            <li class="feat-tag">Caderno</li>
+            <li class="feat-tag">Vitrine</li>
+            <li class="feat-tag">Pop</li>
+          </ul>
+        </article>
 
-        <div class="feature-card fade-up">
-          <div class="feat-icon">📝</div>
-          <div class="feat-title">Títulos, Descrição & Thumbnails</div>
-          <p class="feat-desc">LLM gera título, descrição e sugestões de thumbnail com SEO otimizado para YouTube, direto do conteúdo transcrito. Zero esforço manual.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">LLM local</span>
-            <span class="feat-tag">SEO YouTube</span>
-            <span class="feat-tag">thumbnails</span>
-            <span class="feat-tag">metadados</span>
-          </div>
-        </div>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🧑</div>
+          <h3 class="feat-title">Apresentador</h3>
+          <p class="feat-desc">Um avatar do canal aparece nos trechos que você escolher.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">avatar por canal</li>
+            <li class="feat-tag">opcional</li>
+          </ul>
+        </article>
 
-        <div class="feature-card fade-up">
-          <div class="feat-icon">⚙️</div>
-          <div class="feat-title">Conversor .JSON</div>
-          <p class="feat-desc">Utilitário para converter e adaptar formatos de dados entre as ferramentas do fluxo de produção.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">JSON</span>
-            <span class="feat-tag">utilitário</span>
-          </div>
-        </div>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">✂️</div>
+          <h3 class="feat-title">Editor de vídeo</h3>
+          <p class="feat-desc">Linha do tempo, legendas automáticas e tradução das legendas, para o ajuste final.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">linha do tempo</li>
+            <li class="feat-tag">legendas</li>
+            <li class="feat-tag">tradução</li>
+          </ul>
+        </article>
 
-        <div class="feature-card fade-up">
-          <div class="feat-icon">🔁</div>
-          <div class="feat-title">Recuperação de Cenas Perdidas</div>
-          <p class="feat-desc">Identifica cenas que falharam ou não foram geradas e as recupera automaticamente — sem precisar reiniciar o processo do zero. Mais agilidade, menos retrabalho.</p>
-          <div class="feat-tags">
-            <span class="feat-tag">tolerância a falhas</span>
-            <span class="feat-tag">reprocessamento</span>
-            <span class="feat-tag">produtividade</span>
-          </div>
-        </div>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🏷</div>
+          <h3 class="feat-title">Tags e descrição</h3>
+          <p class="feat-desc">Descrição com capítulos e tags a partir do vídeo pronto.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">capítulos</li>
+            <li class="feat-tag">tags</li>
+          </ul>
+        </article>
+
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">💲</div>
+          <h3 class="feat-title">Custo à vista</h3>
+          <p class="feat-desc">Cada produção mostra quanto gastou em cada serviço.</p>
+          <ul class="feat-tags">
+            <li class="feat-tag">por produção</li>
+            <li class="feat-tag">por serviço</li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ─── STEPS ─── -->
-  <section class="steps-section" id="how">
+  <!-- ─── FERRAMENTAS AVULSAS ─── -->
+  <section class="features" id="tools">
     <div class="container">
-      <div class="steps-head fade-up">
-        <div class="section-label">// como funciona</div>
-        <h2 class="section-title">Três passos. Conteúdo pronto.</h2>
-        <p class="section-sub">Do áudio bruto ao vídeo sincronizado no editor. Simples assim.</p>
+      <div class="section-head fade-up">
+        <div class="section-label">// ferramentas avulsas</div>
+        <h2 class="section-title">E as ferramentas para<br>o resto do trabalho.</h2>
+        <p class="section-sub">Quatro ferramentas que funcionam sozinhas, fora da produção automática.</p>
       </div>
 
-      <div class="steps-track">
-        <div class="step-item fade-up">
-          <div class="step-num">1</div>
-          <h3 class="step-title">Instale o VeloxVid</h3>
-          <p class="step-desc">Baixe o instalador, execute no Windows e pronto. O app se atualiza sozinho quando houver novidades.</p>
-        </div>
-        <div class="step-item fade-up">
-          <div class="step-num">2</div>
-          <h3 class="step-title">Importe seu áudio ou vídeo</h3>
-          <p class="step-desc">Arraste qualquer arquivo — MP3, WAV, MP4, M4A e outros. Sem limite de tamanho ou quantidade.</p>
-        </div>
-        <div class="step-item fade-up">
-          <div class="step-num">3</div>
-          <h3 class="step-title">Deixe a IA trabalhar</h3>
-          <p class="step-desc">Áudio transcrito localmente, vídeos gerados no VEO3 com minutagem — sincronize no editor em minutos e publique.</p>
-        </div>
+      <div class="features-grid tools">
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🎙</div>
+          <h3 class="feat-title">Transcrição</h3>
+          <p class="feat-desc">Áudio e vídeo viram texto no seu computador, com faster-whisper, sem enviar o arquivo.</p>
+        </article>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">📝</div>
+          <h3 class="feat-title">Roteiro</h3>
+          <p class="feat-desc">Do tema ao texto da narração, pelo seu ChatGPT ou Claude. O prompt é seu: você edita.</p>
+        </article>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🎬</div>
+          <h3 class="feat-title">Cenas</h3>
+          <p class="feat-desc">A transcrição vira um prompt de imagem ou vídeo para cada cena.</p>
+        </article>
+        <article class="feature-card fade-up">
+          <div class="feat-icon" aria-hidden="true">🖼</div>
+          <h3 class="feat-title">Thumbnail</h3>
+          <p class="feat-desc">A capa do vídeo em 16:9, pronta em 1280×720.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ─── PRIVACY ─── -->
-  <section class="privacy-section" id="privacy">
+  <!-- ─── SEU COMPUTADOR, SUAS CONTAS ─── -->
+  <section class="privacy-section" id="controle">
     <div class="container">
-      <div class="privacy-inner">
+      <div class="privacy-inner fade-up">
         <div>
-          <div class="section-label">// privacidade & controle</div>
-          <h2 class="section-title">Seus dados ficam no seu computador.</h2>
+          <div class="section-label">// seu computador, suas contas</div>
+          <h2 class="section-title">O vídeo é feito no seu computador, com as suas contas.</h2>
+          <p class="section-sub">O VeloxVid não tem servidor no meio do seu conteúdo: roteiro, narração e imagens vão do seu PC direto para os serviços que você escolheu. Você paga cada serviço pelo preço dele, sem margem nossa.</p>
           <ul class="privacy-list">
             <li class="privacy-item">
-              <span class="check">✓</span>
-              Seus áudios nunca saem do seu HD
+              <span class="check" aria-hidden="true">✓</span>
+              Suas chaves ficam cifradas no seu computador
             </li>
             <li class="privacy-item">
-              <span class="check">✓</span>
-              IA roda inteiramente offline após instalação
+              <span class="check" aria-hidden="true">✓</span>
+              O vídeo pronto fica numa pasta do seu PC
             </li>
             <li class="privacy-item">
-              <span class="check">✓</span>
-              Sem API key de terceiros para transcrição
-            </li>
-            <li class="privacy-item">
-              <span class="check">✓</span>
-              Conteúdo confidencial protegido por padrão
+              <span class="check" aria-hidden="true">✓</span>
+              A transcrição roda no seu computador, sem enviar o áudio
             </li>
           </ul>
         </div>
 
-        <div class="compare-grid">
-          <div class="compare-card winner">
-            <div class="compare-card-head">
-              <span class="compare-label">VeloxVid</span>
-              <span class="compare-badge-win">LOCAL</span>
-            </div>
-            <div class="compare-dots">
-              <span class="compare-dot on"></span>
-              <span class="compare-dot on"></span>
-              <span class="compare-dot on"></span>
-              <span class="compare-dot on"></span>
-              <span class="compare-dot on"></span>
-            </div>
-            <p style="font-size:0.78rem;color:var(--txt-2);margin-top:10px;font-weight:300;">Privado · Rápido · Offline · Sem custo por uso</p>
-          </div>
-          <div class="compare-card">
-            <div class="compare-card-head">
-              <span class="compare-label" style="color:var(--txt-2);">Ferramentas em nuvem</span>
-              <span class="compare-badge-lose">CLOUD</span>
-            </div>
-            <div class="compare-dots">
-              <span class="compare-dot off"></span>
-              <span class="compare-dot off"></span>
-              <span class="compare-dot off"></span>
-              <span class="compare-dot on"></span>
-              <span class="compare-dot off"></span>
-            </div>
-            <p style="font-size:0.78rem;color:var(--txt-3);margin-top:10px;font-weight:300;">Upload obrigatório · Limite de uso · Custo por minuto</p>
-          </div>
-        </div>
+        <table class="compare-table">
+          <caption style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Plataformas online de vídeo comparadas ao VeloxVid</caption>
+          <thead>
+            <tr>
+              <td></td>
+              <th scope="col">Plataformas online de vídeo</th>
+              <th scope="col" class="win">Velox<span>Vid</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Onde o vídeo é montado</th>
+              <td data-label="Plataformas online">No servidor delas</td>
+              <td data-label="VeloxVid" class="win">No seu computador</td>
+            </tr>
+            <tr>
+              <th scope="row">Custo de IA</th>
+              <td data-label="Plataformas online">Créditos da plataforma</td>
+              <td data-label="VeloxVid" class="win">As suas contas, pelo preço de cada serviço</td>
+            </tr>
+            <tr>
+              <th scope="row">Seus arquivos</th>
+              <td data-label="Plataformas online">Na conta da plataforma</td>
+              <td data-label="VeloxVid" class="win">Numa pasta do seu PC</td>
+            </tr>
+            <tr>
+              <th scope="row">Limite de vídeos</th>
+              <td data-label="Plataformas online">Pelo plano</td>
+              <td data-label="VeloxVid" class="win">O da sua máquina e das suas contas</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <!-- ─── PRICING ─── -->
+  <!-- ─── O QUE VOCÊ PRECISA ─── -->
+  <section class="req-section" id="requisitos">
+    <div class="container">
+      <div class="section-head fade-up">
+        <div class="section-label">// o que você precisa</div>
+        <h2 class="section-title">O que você precisa para produzir.</h2>
+        <p class="section-sub">A assinatura é do aplicativo. A produção usa serviços de IA que você contrata no seu nome. Melhor saber antes de assinar.</p>
+      </div>
+
+      <div class="req-grid">
+        <ul class="req-list fade-up">
+          <li class="req-item">
+            <span class="req-key">sistema</span>
+            <div>
+              <h3 class="req-title">Windows 10 ou 11, 64 bits</h3>
+              <p class="req-desc">O VeloxVid é um aplicativo de computador. Não roda em Mac nem em Linux.</p>
+            </div>
+          </li>
+          <li class="req-item">
+            <span class="req-key">produção</span>
+            <div>
+              <h3 class="req-title">Três chaves de API</h3>
+              <p class="req-desc">Uma da OpenRouter, uma da Groq e uma da OpenAI. Para as imagens, a sua conta do ChatGPT serve no lugar da chave da OpenAI.</p>
+            </div>
+          </li>
+          <li class="req-item">
+            <span class="req-key">narração</span>
+            <div>
+              <h3 class="req-title">Um serviço de narração</h3>
+              <p class="req-desc">Só se você não gravar a própria voz. Quem envia o áudio pronto não precisa dele.</p>
+            </div>
+          </li>
+          <li class="req-item">
+            <span class="req-key">ferramentas</span>
+            <div>
+              <h3 class="req-title">Conta do ChatGPT ou do Claude</h3>
+              <p class="req-desc">Para Roteiro, Cenas e Thumbnail, que usam a sua conta num painel dentro do aplicativo.</p>
+            </div>
+          </li>
+          <li class="req-item">
+            <span class="req-key optional">opcional</span>
+            <div>
+              <h3 class="req-title">Acervos, clipes por IA e avatar</h3>
+              <p class="req-desc">Acervos gratuitos de fotos e vídeos, clipes de vídeo por IA e apresentador entram se você ligar. Os dois últimos são pagos à parte.</p>
+            </div>
+          </li>
+        </ul>
+
+        <aside class="req-aside fade-up" aria-label="Quem cobra o quê">
+          <div class="req-aside-label">Quem cobra o quê</div>
+          <div class="req-cost">
+            <h3 class="req-cost-name">Assinatura VeloxVid <span class="req-cost-tag">para nós</span></h3>
+            <p>O aplicativo, as atualizações e o uso em até 3 computadores.</p>
+          </div>
+          <div class="req-cost">
+            <h3 class="req-cost-name">Serviços de IA <span class="req-cost-tag muted">para cada provedor</span></h3>
+            <p>Pagos por você, direto a cada um, pelo preço de cada um. O VeloxVid não cobra nada sobre eles.</p>
+          </div>
+          <p class="req-aside-note"><span class="check" aria-hidden="true">✓</span>O custo é calculado de acordo com cada produção. O VeloxVid mostra quanto cada vídeo gastou, serviço por serviço.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PLANOS ─── -->
   <section class="pricing-section" id="pricing">
     <div class="container">
-      <div class="pricing-head fade-up">
+      <div class="section-head fade-up">
         <div class="section-label">// planos</div>
-        <h2 class="section-title">Todas as ferramentas.<br>Escolha seu ciclo.</h2>
-        <p class="section-sub">Todos os planos incluem acesso completo às ferramentas abaixo. Cancele quando quiser.</p>
+        <h2 class="section-title">Tudo incluso.<br>Escolha o ciclo.</h2>
+        <p class="section-sub">Os três planos dão acesso completo ao aplicativo. Muda só o ciclo de cobrança. Cancele quando quiser.</p>
       </div>
 
-      <!-- Features incluídas em todos os planos -->
+      <!-- Incluso em todos os planos -->
       <div class="pricing-features-shared fade-up">
         <div class="shared-features-label">Incluso em todos os planos</div>
-        <div class="shared-features-grid">
-          <div class="shared-feat"><span class="sf-icon">🎙</span>Transcrição Inteligente</div>
-          <div class="shared-feat"><span class="sf-icon">✍️</span>Gerador de Roteiro VEO3</div>
-          <div class="shared-feat"><span class="sf-icon">🎥</span>Gerador de Vídeos VEO3</div>
-          <div class="shared-feat"><span class="sf-icon">🔁</span>Recuperação de Cenas</div>
-          <div class="shared-feat"><span class="sf-icon">📝</span>Títulos, Descrição & Thumbnails</div>
-          <div class="shared-feat"><span class="sf-icon">⚙️</span>Conversor .JSON</div>
-          <div class="shared-feat"><span class="sf-icon">⚡</span>Modo Auto — pipeline completo</div>
-          <div class="shared-feat"><span class="sf-icon">🔄</span>Atualização automática</div>
-        </div>
+        <ul class="shared-features-grid">
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">🎬</span>Produção automática, do roteiro ao vídeo montado</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">🎨</span>17 estilos, com peças gráficas e trilhas</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">✂️</span>Editor de vídeo e busca de vídeos</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">🎙</span>Transcrição no seu computador</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">📝</span>Roteiro, Cenas e Thumbnail com o seu ChatGPT ou Claude</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">💻</span>Até 3 computadores por conta</li>
+          <li class="shared-feat"><span class="sf-icon" aria-hidden="true">🔄</span>Atualização automática</li>
+        </ul>
       </div>
 
-      <!-- Cards de preço compactos -->
       <div class="pricing-grid">
 
         <!-- Mensal -->
         <div class="pricing-card fade-up">
-          <div class="plan-name">Mensal</div>
+          <h3 class="plan-name">Mensal</h3>
           <div class="plan-cycle">COBRANÇA MENSAL</div>
           <div class="plan-price">
             <div class="plan-price-row">
@@ -1523,13 +519,13 @@
             </div>
           </div>
           <div class="plan-total">&nbsp;</div>
-          <button onclick="openCheckout('mensal')" class="btn-plan outline" style="margin-top:8px">Assinar agora</button>
+          <button type="button" data-checkout="mensal" class="btn-plan outline">Assinar agora</button>
         </div>
 
         <!-- Trimestral -->
         <div class="pricing-card fade-up">
           <div class="pricing-badge discount">-7%</div>
-          <div class="plan-name">Trimestral</div>
+          <h3 class="plan-name">Trimestral</h3>
           <div class="plan-cycle">COBRANÇA A CADA 3 MESES</div>
           <div class="plan-price">
             <div class="plan-price-row">
@@ -1539,13 +535,13 @@
             </div>
           </div>
           <div class="plan-total">R$ 837,00 cobrado trimestralmente</div>
-          <button onclick="openCheckout('trimestral')" class="btn-plan outline" style="margin-top:8px">Assinar agora</button>
+          <button type="button" data-checkout="trimestral" class="btn-plan outline">Assinar agora</button>
         </div>
 
         <!-- Anual -->
         <div class="pricing-card featured fade-up">
           <div class="pricing-badge best">⭐ Melhor valor</div>
-          <div class="plan-name">Anual</div>
+          <h3 class="plan-name">Anual</h3>
           <div class="plan-cycle">COBRANÇA ANUAL</div>
           <div class="plan-price">
             <div class="plan-price-row">
@@ -1555,12 +551,12 @@
             </div>
           </div>
           <div class="plan-total">R$ 2.988,00 cobrado anualmente · <span style="color:var(--green)">-17%</span></div>
-          <button onclick="openCheckout('anual')" class="btn-plan primary" style="margin-top:8px">Assinar agora</button>
+          <button type="button" data-checkout="anual" class="btn-plan primary">Assinar agora</button>
         </div>
 
       </div>
 
-      <p class="pricing-requirements fade-up">Requisitos para funcionamento completo da ferramenta: Windows 10/11 64-bit · conta Google Flow com VEO3 · conta ChatGPT ou Claude.</p>
+      <p class="pricing-requirements fade-up">Os serviços de IA usados na produção são contratados e pagos por você, direto a cada provedor. <a href="#requisitos">Veja o que você precisa →</a></p>
     </div>
   </section>
 
@@ -1574,72 +570,122 @@
 
       <div class="faq-list">
         <div class="faq-item">
-          <button class="faq-q">
-            O VeloxVid funciona sem internet?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            O que o VeloxVid faz?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">Sim. Após a instalação, a transcrição e as ferramentas de IA rodam 100% offline no seu computador. Internet é necessária apenas para baixar atualizações e para as funcionalidades que usam ferramentas externas (como o VEO3).</div>
+            <div class="faq-a-inner">Transforma um roteiro, ou uma narração gravada, num vídeo montado: narra, encontra o visual de cada cena, aplica o estilo do canal e gera o MP4 no seu computador.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Quais formatos de arquivo são suportados?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Preciso pagar outros serviços além da assinatura?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">O VeloxVid aceita MP3, WAV, MP4, M4A e outros formatos de áudio e vídeo comuns. Não há limite de tamanho — o processamento ocorre diretamente no seu HD.</div>
+            <div class="faq-a-inner">Sim. A produção usa serviços de IA (planejamento, narração, imagens) contratados por você. O custo é calculado de acordo com cada produção: o VeloxVid mostra quanto cada vídeo gastou e não cobra nada sobre esses serviços.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Precisa de uma GPU potente para rodar?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Quais contas e chaves eu preciso?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">Não. O VeloxVid usa o faster-whisper otimizado para CPU. Qualquer computador Windows moderno (64-bit) consegue rodar sem precisar de GPU dedicada.</div>
+            <div class="faq-a-inner">OpenRouter, Groq e OpenAI para a produção; um serviço de narração, se não gravar a voz; e a sua conta do ChatGPT ou do Claude para Roteiro, Cenas e Thumbnail. A lista completa está em <a href="#requisitos">O que você precisa</a>.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Como funciona a atualização automática?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Meus arquivos vão para algum servidor do VeloxVid?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">O app verifica automaticamente por novas versões no GitHub Releases ao iniciar. Quando há uma atualização, você é notificado e pode instalar com um clique — sem precisar baixar o instalador manualmente.</div>
+            <div class="faq-a-inner">Não. O vídeo é montado no seu computador e fica numa pasta sua. O texto do roteiro e os pedidos de imagem vão direto para os serviços de IA que você configurou. O nosso servidor só cuida da conta e da assinatura.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Meus arquivos de áudio e vídeo são enviados para algum servidor?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Funciona sem internet?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">Seus arquivos de áudio nunca saem do seu HD — a transcrição é feita inteiramente no seu computador com o modelo faster-whisper. Os prompts de roteiro são enviados ao VEO3 apenas para a geração dos vídeos. Dados de autenticação de conta também trafegam pela rede, mas nenhum arquivo de mídia sai do seu computador.</div>
+            <div class="faq-a-inner">Só em parte. A transcrição roda no seu computador, sem enviar o arquivo. A produção automática precisa de internet para a narração, as imagens e a busca de material, e a entrada na conta também.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Em quais sistemas operacionais roda?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Preciso de uma placa de vídeo?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">O VeloxVid v1.0.72 é exclusivo para Windows 10 e Windows 11 (64-bit). Versões para macOS e Linux podem ser consideradas no futuro.</div>
+            <div class="faq-a-inner">Não é obrigatória. Se o seu computador tiver uma placa compatível, você pode ligar a codificação do vídeo por ela.</div>
           </div>
         </div>
 
         <div class="faq-item">
-          <button class="faq-q">
-            Posso cancelar a assinatura a qualquer momento?
-            <span class="faq-arrow">+</span>
-          </button>
+          <h3><button class="faq-q" type="button">
+            Quanto tempo leva para produzir um vídeo?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
           <div class="faq-a">
-            <div class="faq-a-inner">Sim. Sem fidelidade, sem multa. Você pode cancelar quando quiser e continuar usando as funcionalidades Free normalmente.</div>
+            <div class="faq-a-inner">Depende da duração do vídeo, da sua máquina e da resposta dos serviços de IA. Enquanto o Robô trabalha, você acompanha cada etapa e pode deixar outros vídeos na fila.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            O vídeo sai pronto para o YouTube?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sai o MP4, com tags e descrição para copiar. O VeloxVid não publica: a revisão e o envio são seus.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Em quantos computadores posso usar?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Em até 3, com a mesma conta.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Roda em Mac ou Linux?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Não. Só em Windows 10 e 11, 64 bits.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Posso cancelar quando quiser?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. Sem fidelidade e sem multa: você cancela pela <a href="/conta">sua conta no site</a>. As condições estão nos <a href="/termos">Termos de Uso</a>.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Posso trocar de plano?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim, pela <a href="/conta">sua conta no site</a>.</div>
           </div>
         </div>
       </div>
@@ -1650,18 +696,20 @@
   <section class="cta-section">
     <div class="container">
       <div class="cta-box">
-        <h2>Comece agora. É grátis.</h2>
-        <p>Baixe o VeloxVid e veja quanto tempo você vai recuperar toda semana.</p>
+        <h2>Seu próximo vídeo começa<br>com um roteiro.</h2>
+        <p>Assine, instale no seu Windows e cole o primeiro.</p>
         <div class="cta-actions">
           <a href="#" data-download class="btn-primary">
-            ↓ Baixar VeloxVid Grátis
+            ↓ Baixar para Windows
           </a>
-          <a href="#pricing" class="btn-secondary">Ver plano Pro →</a>
+          <a href="#pricing" class="btn-secondary">Ver planos →</a>
         </div>
         <p class="cta-note">Windows 10/11 · 64-bit · <span class="app-version">-</span> · Atualização automática incluída</p>
       </div>
     </div>
   </section>
+
+  </main>
 
   <!-- ─── FOOTER ─── -->
   <footer>
@@ -1669,168 +717,17 @@
       <div class="footer-inner">
         <a href="#" class="footer-logo">Velox<span>Vid</span></a>
         <ul class="footer-links">
+          <li><a href="/planos">Planos</a></li>
           <li><a href="/termos">Termos de Uso</a></li>
           <li><a href="/privacidade">Privacidade</a></li>
           <li><a href="mailto:contato@veloxvid.com">Contato</a></li>
-          <li><a href="https://github.com/wyllenlima/VeloxVid-releases">GitHub</a></li>
+          <li><a href="https://github.com/wyllenlima/VeloxVid-releases" rel="noopener">GitHub</a></li>
         </ul>
         <span class="footer-copy">© 2026 VeloxVid · contato@veloxvid.com</span>
       </div>
+      <p class="footer-legal">ChatGPT, Claude, YouTube e os demais serviços citados são marcas de seus respectivos donos. O VeloxVid não é afiliado a eles.</p>
     </div>
   </footer>
-
-  <!-- ─── MODAL CHECKOUT ─── -->
-  <style>
-    .modal-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--bg-card);
-      border: 1px solid var(--border-mid);
-      border-radius: 20px;
-      padding: 36px;
-      width: 100%; max-width: 420px;
-      position: relative;
-      animation: modalIn 0.22s ease;
-    }
-    @keyframes modalIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0)    scale(1);    }
-    }
-    .modal-close {
-      position: absolute; top: 16px; right: 16px;
-      background: none; border: none;
-      color: var(--txt-3); font-size: 1.2rem;
-      cursor: pointer; padding: 4px 8px;
-      border-radius: 6px; line-height: 1;
-      transition: color 0.2s, background 0.2s;
-    }
-    .modal-close:hover { color: var(--txt); background: var(--bg-card2); }
-    .modal-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 4px; }
-    .modal-sub { color: var(--txt-2); font-size: 0.875rem; font-weight: 300; margin-bottom: 24px; }
-    .modal-plan-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--blue-dim);
-      border: 1px solid rgba(74,158,255,0.3);
-      color: var(--blue);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem; padding: 4px 12px;
-      border-radius: 100px; margin-bottom: 20px;
-      letter-spacing: 0.04em;
-    }
-    .modal-form-group { margin-bottom: 13px; }
-    .modal-label { display: block; font-size: 0.78rem; font-weight: 500; color: var(--txt-2); margin-bottom: 5px; }
-    .modal-input {
-      width: 100%;
-      background: var(--bg-card2);
-      border: 1px solid var(--border-mid);
-      border-radius: 10px;
-      padding: 11px 14px;
-      color: var(--txt); font-size: 0.88rem;
-      font-family: 'DM Sans', sans-serif;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .modal-input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 3px var(--blue-dim);
-    }
-    .modal-btn {
-      display: block; width: 100%;
-      background: var(--blue); color: #fff;
-      border: none; border-radius: 10px;
-      padding: 13px;
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 700; font-size: 0.95rem;
-      cursor: pointer; margin-top: 6px;
-      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
-    }
-    .modal-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px var(--blue-glow);
-    }
-    .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .modal-alert {
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.83rem;
-      margin-bottom: 16px;
-      display: none;
-    }
-    .modal-alert.show { display: block; }
-    .modal-alert-error   { background: rgba(255,90,90,0.10);  border: 1px solid rgba(255,90,90,0.30);  color: #FF8585; }
-    .modal-footer {
-      text-align: center;
-      margin-top: 16px;
-      font-size: 0.82rem;
-      color: var(--txt-3);
-    }
-    .modal-footer a { color: var(--blue); text-decoration: underline; }
-
-    .plan-select {
-      display: flex; gap: 8px; margin-bottom: 18px;
-    }
-    .plan-opt {
-      flex: 1; padding: 9px 4px;
-      background: var(--bg-card2);
-      border: 1px solid var(--border-mid);
-      border-radius: 8px;
-      color: var(--txt-2); font-size: 0.78rem;
-      font-family: 'DM Sans', sans-serif; font-weight: 500;
-      cursor: pointer; text-align: center;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-    }
-    .plan-opt.active {
-      border-color: var(--blue);
-      background: var(--blue-dim);
-      color: var(--blue);
-    }
-    .plan-opt small { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.64rem; margin-top: 2px; opacity: 0.7; }
-  </style>
-
-  <div class="modal-overlay" id="checkoutModal" onclick="if(event.target===this)closeCheckout()">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeCheckout()">✕</button>
-
-      <div class="modal-title">Criar conta</div>
-      <p class="modal-sub">Preencha para prosseguir com o pagamento</p>
-
-      <div class="plan-select" id="planSelect">
-        <button class="plan-opt" data-plan="mensal"     onclick="selectPlan('mensal')">Mensal<small>R$299/mês</small></button>
-        <button class="plan-opt" data-plan="trimestral" onclick="selectPlan('trimestral')">Trimestral<small>R$279/mês</small></button>
-        <button class="plan-opt" data-plan="anual"      onclick="selectPlan('anual')">Anual<small>R$249/mês</small></button>
-      </div>
-
-      <div class="modal-alert modal-alert-error" id="checkoutError"></div>
-
-      <form onsubmit="doCheckout(event)">
-        <div class="modal-form-group">
-          <label class="modal-label" for="ckNome">Nome completo</label>
-          <input class="modal-input" type="text" id="ckNome" placeholder="Seu nome" required autocomplete="name" />
-        </div>
-        <div class="modal-form-group">
-          <label class="modal-label" for="ckEmail">E-mail</label>
-          <input class="modal-input" type="email" id="ckEmail" placeholder="seu@email.com" required autocomplete="email" />
-        </div>
-        <div class="modal-form-group">
-          <label class="modal-label" for="ckSenha">Senha <span style="color:var(--txt-3)">(mínimo 6 caracteres)</span></label>
-          <input class="modal-input" type="password" id="ckSenha" placeholder="••••••••" required minlength="6" autocomplete="new-password" />
-        </div>
-        <button class="modal-btn" type="submit" id="checkoutBtn">Continuar para pagamento →</button>
-      </form>
-
-      <div class="modal-footer">
-        Já tem conta? <a href="/conta.html">Entrar →</a>
-      </div>
-    </div>
-  </div>
 
   <!-- ─── JS ─── -->
   <script>
@@ -1841,210 +738,10 @@
     const APP_VERSION = APP_RELEASE.replace(/^v/, '')
     const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup.exe`;
 
-    // ─── Checkout modal ───────────────────────────────────────
-    const API_URL    = 'https://veloxvid-production.up.railway.app';
-    let   activePlan = 'anual';
-
-    // Auto-abre o modal se vier de ?checkout=plano (ex: conta.html → "Assinar agora")
-    (function checkAutoCheckout() {
-      const p = new URLSearchParams(location.search).get('checkout');
-      if (p) {
-        history.replaceState({}, '', location.pathname); // limpa a URL
-        requestAnimationFrame(() => openCheckout(p));
-      }
-    })();
-
-    function openCheckout(plan) {
-      activePlan = plan || 'anual';
-      selectPlan(activePlan);
-      document.getElementById('checkoutModal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-      document.getElementById('checkoutError').classList.remove('show');
-    }
-
-    function closeCheckout() {
-      document.getElementById('checkoutModal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function selectPlan(plan) {
-      activePlan = plan;
-      document.querySelectorAll('.plan-opt').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.plan === plan);
-      });
-    }
-
-    async function doCheckout(e) {
-      e.preventDefault();
-      const errEl = document.getElementById('checkoutError');
-      errEl.classList.remove('show');
-
-      const btn  = document.getElementById('checkoutBtn');
-      btn.disabled    = true;
-      btn.textContent = 'Processando...';
-
-      const name     = document.getElementById('ckNome').value.trim();
-      const email    = document.getElementById('ckEmail').value.trim();
-      const password = document.getElementById('ckSenha').value;
-
-      try {
-        const res  = await fetch(`${API_URL}/checkout/register-and-subscribe`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ name, email, password, plano: activePlan })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          const msg = res.status === 400 && data.detail && data.detail.includes('ativo')
-            ? 'Este e-mail já possui assinatura ativa. <a href="/conta.html">Entrar →</a>'
-            : (data.detail || 'Erro ao processar. Tente novamente.');
-          errEl.innerHTML = msg;
-          errEl.classList.add('show');
-          return;
-        }
-
-        window.location.href = data.url;
-      } catch {
-        errEl.textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
-        errEl.classList.add('show');
-      } finally {
-        btn.disabled    = false;
-        btn.textContent = 'Continuar para pagamento →';
-      }
-    }
-
-    // Fechar com Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeCheckout();
-    });
-
-  </script>
-
-  <script>
-    // Nav scroll effect
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 20);
-    }, { passive: true });
-
-    // Generate waveform bars
-    const wf = document.getElementById('waveform');
-    const heights = [20,35,55,70,45,80,60,90,65,50,85,40,75,55,70,45,60,80,35,65,50,75,40,85,55,70,45,60,35,80];
-    heights.forEach((h, i) => {
-      const bar = document.createElement('div');
-      bar.className = 'waveform-bar';
-      bar.style.cssText = `height:${h}%; --d:${0.8 + Math.random()*0.8}s; --delay:${(i * 0.04).toFixed(2)}s; animation-delay:var(--delay)`;
-      wf.appendChild(bar);
-    });
-
-    // Fade-up on scroll
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-
-    // Hero elements visible immediately
-    document.querySelectorAll('.hero .fade-up').forEach(el => {
-      el.classList.add('visible');
-    });
-
-    // FAQ accordion
-    document.querySelectorAll('.faq-item').forEach(item => {
-      const btn = item.querySelector('.faq-q');
-      const body = item.querySelector('.faq-a');
-      btn.addEventListener('click', () => {
-        const isOpen = item.classList.contains('open');
-        // close all
-        document.querySelectorAll('.faq-item').forEach(i => {
-          i.classList.remove('open');
-          i.querySelector('.faq-a').style.maxHeight = '0';
-        });
-        // open clicked
-        if (!isOpen) {
-          item.classList.add('open');
-          body.style.maxHeight = body.scrollHeight + 'px';
-        }
-      });
-    });
-
-    // Smooth scroll for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) {
-          e.preventDefault();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-
-    // ─── Auth state in nav ────────────────────────────────────
-    (async function initNavAuth() {
-      const token = localStorage.getItem('vv_token') || sessionStorage.getItem('vv_token');
-      if (!token) return;
-      try {
-        const res = await fetch('https://veloxvid-production.up.railway.app/auth/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (!res.ok) { localStorage.removeItem('vv_token'); sessionStorage.removeItem('vv_token'); return; }
-        const user = await res.json();
-        const displayName = user.name || user.email.split('@')[0];
-        const initial = displayName.charAt(0).toUpperCase();
-        const item = document.getElementById('navAuthItem');
-        item.innerHTML = `<a href="/conta.html" class="nav-user">
-          <span class="nav-user-avatar">${initial}</span>
-          ${displayName}
-        </a>`;
-        // Esconde "Assinar Agora" e mostra "Sair" se já está logado
-        const subItem = document.getElementById('navSubscribeItem');
-        if (subItem) subItem.style.display = 'none';
-        const logoutItem = document.getElementById('navLogoutItem');
-        if (logoutItem) logoutItem.style.display = 'list-item';
-      } catch { /* silent — won't block page */ }
-    })();
-
     // ─── Versão e URLs de download ────────────────────────────
     document.querySelectorAll('.app-version').forEach(el => el.textContent = APP_RELEASE);
     document.querySelectorAll('[data-download]').forEach(el => el.href = DOWNLOAD_URL);
-
-    // ─── Logout rápido do nav ─────────────────────────────────
-    function navLogout() {
-      const token = localStorage.getItem('vv_token');
-      if (token) {
-        fetch('https://veloxvid-production.up.railway.app/auth/session', {
-          method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` }
-        }).catch(() => {});
-      }
-      localStorage.removeItem('vv_token');
-      sessionStorage.removeItem('vv_token');
-      location.reload();
-    }
-
-    // ─── Mobile hamburger ─────────────────────────────────────
-    function toggleMobileMenu() {
-      const links = document.getElementById('navLinks');
-      const burger = document.getElementById('navHamburger');
-      const open = links.classList.toggle('mobile-open');
-      burger.classList.toggle('open', open);
-      document.body.style.overflow = open ? 'hidden' : '';
-    }
-
-    // Close mobile menu on link click
-    document.querySelectorAll('#navLinks a').forEach(a => {
-      a.addEventListener('click', () => {
-        document.getElementById('navLinks').classList.remove('mobile-open');
-        document.getElementById('navHamburger').classList.remove('open');
-        document.body.style.overflow = '';
-      });
-    });
   </script>
+  <script src="/assets/site.js" defer></script>
 </body>
 </html>

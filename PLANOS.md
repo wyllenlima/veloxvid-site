@@ -35,14 +35,15 @@
 
 ## O que está incluso em todos os planos
 
-- Transcrição Inteligente — faster-whisper local
-- Gerador de Roteiro VEO3
-- Gerador de Vídeos VEO3 em massa
-- Títulos, Descrição & Thumbnails via IA
-- Converter .json — exportação de dados
-- Modo Auto — pipeline completo
-- Atualização automática do app
-- Processamento 100% local (sem envio de dados)
+- Produção automática — do roteiro ao vídeo montado
+- 17 estilos, com peças gráficas e trilhas
+- Editor de vídeo e busca de vídeos
+- Transcrição no seu computador
+- Roteiro, Cenas e Thumbnail com o ChatGPT ou Claude do cliente
+- Até 3 computadores por conta
+- Atualização automática
+
+Os serviços de IA usados na produção são contratados e pagos pelo cliente, direto a cada provedor.
 
 ---
 
@@ -54,7 +55,8 @@ Na seção de planos, mostrar os 3 cards lado a lado:
 - Mostrar o valor total cobrado em texto menor abaixo
 - Mostrar o percentual de desconto em badge verde (-7%, -17%)
 - CTA único: "Assinar agora" → redireciona para o app (checkout via Stripe)
-- Não há plano Free — mas o app pode ser baixado e testado sem assinatura até o login exigir plano ativo
+- Não há plano Free: o download é livre, mas o aplicativo só abre com assinatura ativa
+- A página `/planos` repete os três cards e é o destino do botão "Renovar assinatura" do aplicativo
 
 ---
 
@@ -85,14 +87,14 @@ O site chama a API do Railway para criar conta + sessão Stripe em uma única ch
 **Resposta de sucesso (200):**
 ```json
 {
-  "checkout_url": "https://checkout.stripe.com/pay/cs_live_..."
+  "url": "https://checkout.stripe.com/pay/cs_live_..."
 }
 ```
 
 **O site deve:**
 1. Exibir um formulário com nome, email, senha e plano selecionado
 2. Fazer `POST` para o endpoint acima
-3. Redirecionar o usuário para `checkout_url` (abre o Stripe Checkout)
+3. Redirecionar o usuário para `url` (abre o Stripe Checkout)
 4. Após o pagamento, o Stripe redireciona para a `success_url` configurada no backend
 
 **Tratamento de erros:**

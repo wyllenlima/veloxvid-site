@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minha conta — VeloxVid</title>
   <meta name="description" content="Gerencie sua conta e assinatura VeloxVid." />
+  <meta name="robots" content="noindex" />
+  <link rel="canonical" href="https://veloxvid.com/conta" />
   <meta name="theme-color" content="#0e1117" />
-  <link rel="icon" href="/icon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/assets/fonts.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -76,9 +78,9 @@
       font-weight: 800; font-size: 1.25rem;
       color: var(--txt); text-decoration: none;
       letter-spacing: -0.03em;
-      display: flex; align-items: center; gap: 8px;
+      display: flex; align-items: center;
     }
-    .nav-logo img { width: 28px; height: 28px; object-fit: contain; }
+    .nav-logo img { width: 28px; height: 28px; object-fit: contain; margin-right: 8px; }
     .nav-logo span { color: var(--blue); }
     .nav-right { display: flex; align-items: center; gap: 20px; }
     .nav-link {
@@ -349,7 +351,7 @@
     <div class="container">
       <div class="nav-inner">
         <a href="/" class="nav-logo">
-          <img src="/icon.svg" alt="VeloxVid" />Velox<span>Vid</span>
+          <img src="/assets/img/logo-64.png" alt="" width="28" height="28" />Velox<span>Vid</span>
         </a>
         <div class="nav-right">
           <a href="/" class="nav-link">← Voltar</a>
@@ -895,7 +897,7 @@
 
         showAlert('resetSuccess', 'Senha redefinida! Redirecionando para o login...');
         setTimeout(() => {
-          history.replaceState({}, '', '/conta.html');
+          history.replaceState({}, '', '/conta');
           showView('viewLogin');
         }, 2200);
       } catch {

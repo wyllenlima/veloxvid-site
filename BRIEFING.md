@@ -1,5 +1,8 @@
 # VeloxVid — Design Brief · Landing Page
 
+> **Nota (22/11/2026):** a parte visual deste documento (seções 3, 4 e 5) continua valendo e é a referência de identidade do site.
+> O produto, as seções da página e o texto (seções 1, 2, 6 e 7) estão superados: o conteúdo atual é o de `REVISAO-SITE-SEO-2026-11-22.md`.
+
 ---
 
 ## 1. Produto

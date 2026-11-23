@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planos e preços — VeloxVid</title>
+  <meta name="description" content="Planos do VeloxVid: mensal por R$ 299, trimestral por R$ 279/mês ou anual por R$ 249/mês. Tudo incluso nos três. Veja o que a assinatura cobre e o que é pago à parte." />
+  <link rel="canonical" href="https://veloxvid.com/planos" />
+  <meta name="theme-color" content="#0e1117" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="VeloxVid" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="https://veloxvid.com/planos" />
+  <meta property="og:title" content="Planos e preços — VeloxVid" />
+  <meta property="og:description" content="Mensal, trimestral ou anual: os três planos dão acesso completo ao VeloxVid. Veja o que a assinatura cobre e o que é pago à parte." />
+  <meta property="og:image" content="https://veloxvid.com/assets/img/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/fonts.css" />
+  <link rel="stylesheet" href="/assets/site.css" />
+  <script>document.documentElement.classList.add('js');</script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Início", "item": "https://veloxvid.com/" },
+      { "@type": "ListItem", "position": 2, "name": "Planos", "item": "https://veloxvid.com/planos" }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- ─── NAV ─── -->
+  <nav id="nav" aria-label="Principal">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="/" class="nav-logo" aria-label="VeloxVid, início"><img src="/assets/img/logo-64.png" alt="" width="28" height="28" />Velox<span>Vid</span></a>
+        <ul class="nav-links" id="navLinks">
+          <li><a href="/#how">Como funciona</a></li>
+          <li><a href="/#features">Recursos</a></li>
+          <li><a href="/#requisitos">Requisitos</a></li>
+          <li><a href="/planos" aria-current="page" style="color:var(--txt)">Planos</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li id="navAuthItem"><a href="/conta" id="navAuthLink">Entrar</a></li>
+          <li id="navLogoutItem" style="display:none"><a href="#" id="navLogoutLink">Sair</a></li>
+          <li id="navSubscribeItem"><a href="#pricing" data-checkout="anual" class="nav-cta">Assinar agora</a></li>
+        </ul>
+        <button class="nav-hamburger" id="navHamburger" type="button" aria-label="Menu" aria-controls="navLinks" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+
+  <!-- ─── CABEÇALHO ─── -->
+  <section class="page-hero">
+    <div class="container">
+      <div class="section-label">// planos</div>
+      <h1>Tudo incluso.<br><span class="accent">Escolha o ciclo.</span></h1>
+      <p class="section-sub">Os três planos dão acesso completo ao VeloxVid. Muda só o ciclo de cobrança: quanto maior, menor o valor por mês.</p>
+    </div>
+  </section>
+
+  <!-- ─── PLANOS ─── -->
+  <section class="pricing-section" id="pricing">
+    <div class="container">
+
+      <p class="renew-note">
+        <span class="renew-icon" aria-hidden="true">↻</span>
+        <span><strong>Sua assinatura venceu?</strong> Escolha um ciclo e informe o mesmo e-mail da sua conta. A senha que você já usa continua valendo.</span>
+      </p>
+
+      <div class="pricing-grid">
+
+        <!-- Mensal -->
+        <div class="pricing-card">
+          <h2 class="plan-name">Mensal</h2>
+          <div class="plan-cycle">COBRANÇA MENSAL</div>
+          <div class="plan-price">
+            <div class="plan-price-row">
+              <span class="currency">R$</span>
+              <span class="amount">299</span>
+              <span class="period">/mês</span>
+            </div>
+          </div>
+          <div class="plan-total">&nbsp;</div>
+          <button type="button" data-checkout="mensal" class="btn-plan outline">Assinar agora</button>
+        </div>
+
+        <!-- Trimestral -->
+        <div class="pricing-card">
+          <div class="pricing-badge discount">-7%</div>
+          <h2 class="plan-name">Trimestral</h2>
+          <div class="plan-cycle">COBRANÇA A CADA 3 MESES</div>
+          <div class="plan-price">
+            <div class="plan-price-row">
+              <span class="currency">R$</span>
+              <span class="amount">279</span>
+              <span class="period">/mês</span>
+            </div>
+          </div>
+          <div class="plan-total">R$ 837,00 cobrado trimestralmente</div>
+          <button type="button" data-checkout="trimestral" class="btn-plan outline">Assinar agora</button>
+        </div>
+
+        <!-- Anual -->
+        <div class="pricing-card featured">
+          <div class="pricing-badge best">⭐ Melhor valor</div>
+          <h2 class="plan-name">Anual</h2>
+          <div class="plan-cycle">COBRANÇA ANUAL</div>
+          <div class="plan-price">
+            <div class="plan-price-row">
+              <span class="currency">R$</span>
+              <span class="amount">249</span>
+              <span class="period">/mês</span>
+            </div>
+          </div>
+          <div class="plan-total">R$ 2.988,00 cobrado anualmente · <span style="color:var(--green)">-17%</span></div>
+          <button type="button" data-checkout="anual" class="btn-plan primary">Assinar agora</button>
+        </div>
+
+      </div>
+
+      <p class="pricing-requirements">Pagamento por cartão, processado pela Stripe. Cancele quando quiser, pela sua conta no site.</p>
+    </div>
+  </section>
+
+  <!-- ─── O QUE A ASSINATURA COBRE ─── -->
+  <section class="cover-section">
+    <div class="container">
+      <div class="cover-grid">
+        <div class="cover-card highlight fade-up">
+          <div class="section-label">// incluso nos três planos</div>
+          <h2>O que a assinatura cobre</h2>
+          <p>O aplicativo completo, sem recurso travado por plano.</p>
+          <ul class="privacy-list">
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Produção automática, do roteiro ao vídeo montado</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>17 estilos, com peças gráficas e trilhas</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Editor de vídeo e busca de vídeos</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Transcrição no seu computador</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Roteiro, Cenas e Thumbnail com o seu ChatGPT ou Claude</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Até 3 computadores por conta</li>
+            <li class="privacy-item"><span class="check" aria-hidden="true">✓</span>Atualização automática</li>
+          </ul>
+        </div>
+
+        <div class="cover-card fade-up">
+          <div class="section-label">// pago à parte</div>
+          <h2>O que não entra na assinatura</h2>
+          <p>Os serviços de IA usados na produção são contratados e pagos por você, direto a cada provedor. O VeloxVid não cobra nada sobre eles e mostra o custo de cada vídeo.</p>
+          <ul class="privacy-list">
+            <li class="privacy-item"><span class="check neutral" aria-hidden="true">+</span>Chaves da OpenRouter, da Groq e da OpenAI, para a produção</li>
+            <li class="privacy-item"><span class="check neutral" aria-hidden="true">+</span>Um serviço de narração, se você não gravar a própria voz</li>
+            <li class="privacy-item"><span class="check neutral" aria-hidden="true">+</span>A sua conta do ChatGPT ou do Claude, para Roteiro, Cenas e Thumbnail</li>
+            <li class="privacy-item"><span class="check neutral" aria-hidden="true">+</span>Clipes de vídeo por IA e avatar, se você quiser usar</li>
+          </ul>
+          <p style="margin-top:20px"><a href="/#requisitos">Ver tudo o que você precisa →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FAQ ─── -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="faq-head fade-up">
+        <div class="section-label">// cobrança e assinatura</div>
+        <h2 class="section-title">Dúvidas sobre os planos</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Qual é a diferença entre os planos?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Só o ciclo de cobrança. O mensal custa R$ 299 por mês. O trimestral sai por R$ 279 por mês, cobrado em R$ 837 a cada três meses. O anual sai por R$ 249 por mês, cobrado em R$ 2.988 uma vez por ano. Os recursos são os mesmos nos três.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Existe plano grátis ou período de teste?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Não. O download do instalador é livre, mas o aplicativo só abre com uma assinatura ativa.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Preciso pagar outros serviços além da assinatura?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. A produção usa serviços de IA (planejamento, narração, imagens) contratados por você. O custo é calculado de acordo com cada produção: o VeloxVid mostra quanto cada vídeo gastou e não cobra nada sobre esses serviços.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Como é feito o pagamento?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Por cartão, numa página segura da Stripe. A cobrança se repete sozinha a cada ciclo, até você cancelar.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Posso cancelar quando quiser?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. Sem fidelidade e sem multa: você cancela pela <a href="/conta">sua conta no site</a>. As condições estão nos <a href="/termos">Termos de Uso</a>.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Posso trocar de plano?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim, pela <a href="/conta">sua conta no site</a>.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Em quantos computadores posso usar?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Em até 3, com a mesma conta.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
+            Minha assinatura venceu. Como eu renovo?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Escolha um ciclo nesta página e informe o mesmo e-mail da sua conta. Depois do pagamento, entre no aplicativo com a senha que você já usava.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA FINAL ─── -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <h2>Seu próximo vídeo começa<br>com um roteiro.</h2>
+        <p>Assine, instale no seu Windows e cole o primeiro.</p>
+        <div class="cta-actions">
+          <button type="button" data-checkout="anual" class="btn-primary">Assinar agora</button>
+          <a href="/" class="btn-secondary">Conhecer o VeloxVid →</a>
+        </div>
+        <p class="cta-note">Windows 10/11 · 64-bit · até 3 computadores por conta</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <a href="/" class="footer-logo">Velox<span>Vid</span></a>
+        <ul class="footer-links">
+          <li><a href="/planos">Planos</a></li>
+          <li><a href="/termos">Termos de Uso</a></li>
+          <li><a href="/privacidade">Privacidade</a></li>
+          <li><a href="mailto:contato@veloxvid.com">Contato</a></li>
+          <li><a href="https://github.com/wyllenlima/VeloxVid-releases" rel="noopener">GitHub</a></li>
+        </ul>
+        <span class="footer-copy">© 2026 VeloxVid · contato@veloxvid.com</span>
+      </div>
+      <p class="footer-legal">ChatGPT, Claude, YouTube e os demais serviços citados são marcas de seus respectivos donos. O VeloxVid não é afiliado a eles.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/site.js" defer></script>
+</body>
+</html>

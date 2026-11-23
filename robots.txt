@@ -1,0 +1,6 @@
+# O Cloudflare acrescenta as regras gerenciadas dele acima deste conteúdo.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://veloxvid.com/sitemap.xml

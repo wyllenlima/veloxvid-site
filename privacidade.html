@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Política de Privacidade — VeloxVid</title>
-  <meta name="description" content="Política de Privacidade do VeloxVid. Saiba como tratamos seus dados." />
+  <meta name="description" content="Política de Privacidade do VeloxVid: que dados da conta e da assinatura coletamos, quais terceiros usamos e o que fica só no seu computador." />
+  <link rel="canonical" href="https://veloxvid.com/privacidade" />
   <meta name="theme-color" content="#0e1117" />
-  <link rel="icon" href="/icon.ico" type="image/x-icon" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" href="/assets/img/icon-192.png" type="image/png" sizes="192x192" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="stylesheet" href="/assets/fonts.css" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -82,9 +83,8 @@
       letter-spacing: -0.03em;
       display: flex;
       align-items: center;
-      gap: 8px;
     }
-    .nav-logo img { width: 26px; height: 26px; object-fit: contain; }
+    .nav-logo img { width: 26px; height: 26px; object-fit: contain; margin-right: 8px; }
     .nav-logo span { color: var(--blue); }
     .nav-back {
       font-size: 0.83rem;
@@ -250,7 +250,7 @@
   <nav>
     <div class="container" style="max-width:1100px">
       <div class="nav-inner">
-        <a href="/" class="nav-logo"><img src="/icon.svg" alt="VeloxVid" />Velox<span>Vid</span></a>
+        <a href="/" class="nav-logo"><img src="/assets/img/logo-64.png" alt="" width="28" height="28" />Velox<span>Vid</span></a>
         <a href="/" class="nav-back">← Voltar ao início</a>
       </div>
     </div>
@@ -261,29 +261,33 @@
       <div class="page-header">
         <div class="page-label">// legal</div>
         <h1>Política de Privacidade</h1>
-        <p>Última atualização: 25 de abril de 2026</p>
+        <p>Última atualização: 22 de novembro de 2026</p>
       </div>
 
       <div class="legal-content">
 
         <div class="legal-section">
           <h2><span class="num">01</span> Compromisso com sua privacidade</h2>
-          <p>O VeloxVid foi construído com privacidade como princípio central. Nosso diferencial técnico é o processamento local de IA — seus arquivos de áudio e vídeo nunca saem do seu computador.</p>
+          <p>O VeloxVid foi construído para que o seu conteúdo fique sob o seu controle. O vídeo é montado no seu computador e fica numa pasta sua. O nosso servidor cuida só da sua conta e da sua assinatura.</p>
           <div class="highlight-local">
             <span class="hl-icon">🔒</span>
-            <p><strong>Processamento 100% local:</strong> arquivos de áudio e vídeo são processados exclusivamente no seu dispositivo. Nenhum conteúdo de mídia é enviado para nossos servidores ou serviços de terceiros durante a transcrição.</p>
+            <p><strong>Transcrição no seu computador:</strong> arquivos de áudio e vídeo são transcritos no seu dispositivo. Nenhum conteúdo de mídia é enviado para nossos servidores ou serviços de terceiros durante a transcrição.</p>
           </div>
+          <p style="margin-top:14px;">As outras funções usam serviços de terceiros, com as suas contas. A seção 05 explica o que é enviado a eles.</p>
         </div>
 
         <div class="legal-section">
           <h2><span class="num">02</span> Dados que coletamos</h2>
           <p>Coletamos apenas o mínimo necessário para o funcionamento do serviço:</p>
           <ul>
-            <li><strong style="color:var(--txt)">E-mail e senha</strong> — para criação e autenticação da conta</li>
-            <li><strong style="color:var(--txt)">Status da licença</strong> — para verificar o plano ativo (Free ou Pro)</li>
+            <li><strong style="color:var(--txt)">Nome, e-mail e senha</strong> — para criação e autenticação da conta</li>
+            <li><strong style="color:var(--txt)">Dados da assinatura</strong> — ciclo contratado, situação e validade, para liberar o acesso ao aplicativo</li>
+            <li><strong style="color:var(--txt)">Dados de pagamento</strong> — processados pela Stripe; não armazenamos o número do seu cartão</li>
+            <li><strong style="color:var(--txt)">Computadores conectados</strong> — um identificador de cada dispositivo, para aplicar o limite de computadores por conta</li>
             <li><strong style="color:var(--txt)">Dados de uso básicos</strong> — versão do app e sistema operacional, para suporte técnico</li>
           </ul>
-          <p style="margin-top:14px;">Não coletamos: conteúdo de arquivos de mídia, transcrições geradas, roteiros, títulos ou qualquer dado de conteúdo produzido no app.</p>
+          <p style="margin-top:14px;">Não coletamos: roteiros, narrações, imagens, vídeos, transcrições ou qualquer outro conteúdo produzido no app. As chaves de API dos serviços que você usa ficam cifradas no seu computador e não são enviadas a nós.</p>
+          <p style="margin-top:14px;">Este site guarda no seu navegador o dado de sessão do seu login, para manter você conectado à área da conta.</p>
         </div>
 
         <div class="legal-section">
@@ -301,20 +305,30 @@
           <h2><span class="num">04</span> Infraestrutura e terceiros</h2>
           <p>Utilizamos os seguintes serviços de terceiros para operação do VeloxVid:</p>
           <ul>
-            <li><strong style="color:var(--txt)">Supabase</strong> — autenticação e gerenciamento de licenças</li>
-            <li><strong style="color:var(--txt)">GitHub Releases</strong> — distribuição de atualizações do aplicativo</li>
+            <li><strong style="color:var(--txt)">Supabase</strong> — banco de dados das contas e das assinaturas</li>
+            <li><strong style="color:var(--txt)">Railway</strong> — servidor que atende a conta e a assinatura</li>
+            <li><strong style="color:var(--txt)">Stripe</strong> — processamento do pagamento e gestão da cobrança</li>
+            <li><strong style="color:var(--txt)">Resend</strong> — envio dos e-mails do serviço, como o de redefinição de senha</li>
+            <li><strong style="color:var(--txt)">GitHub Releases</strong> — distribuição do instalador e das atualizações do aplicativo</li>
+            <li><strong style="color:var(--txt)">Hugging Face</strong> — download dos modelos de transcrição durante a instalação</li>
             <li><strong style="color:var(--txt)">Cloudflare</strong> — hospedagem deste site</li>
           </ul>
           <p style="margin-top:14px;">Cada um desses serviços possui sua própria política de privacidade. Recomendamos a leitura das políticas dos prestadores que você considerar relevante.</p>
         </div>
 
         <div class="legal-section">
-          <h2><span class="num">05</span> Segurança dos dados</h2>
+          <h2><span class="num">05</span> Serviços de IA usados com as suas contas</h2>
+          <p>Na produção automática e nas ferramentas Roteiro, Cenas e Thumbnail, o aplicativo envia conteúdo do seu computador diretamente aos serviços de inteligência artificial e aos acervos de mídia que você configurou, usando as suas contas e as suas chaves. Esse conteúdo inclui, por exemplo, o texto do roteiro, a narração e os pedidos de imagem.</p>
+          <p>Esse conteúdo não passa pelos nossos servidores. O tratamento feito por esses serviços segue os termos e a política de privacidade de cada um, e a relação é entre você e o provedor.</p>
+        </div>
+
+        <div class="legal-section">
+          <h2><span class="num">06</span> Segurança dos dados</h2>
           <p>Adotamos medidas técnicas para proteger seus dados, incluindo criptografia em trânsito (HTTPS/TLS) e autenticação segura. Nenhum sistema é 100% inviolável, mas nos comprometemos a agir prontamente em caso de incidentes.</p>
         </div>
 
         <div class="legal-section">
-          <h2><span class="num">06</span> Seus direitos (LGPD)</h2>
+          <h2><span class="num">07</span> Seus direitos (LGPD)</h2>
           <p>De acordo com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018), você tem direito a:</p>
           <ul>
             <li>Confirmar a existência de tratamento dos seus dados</li>
@@ -327,12 +341,12 @@
         </div>
 
         <div class="legal-section">
-          <h2><span class="num">07</span> Retenção de dados</h2>
+          <h2><span class="num">08</span> Retenção de dados</h2>
           <p>Mantemos seus dados enquanto sua conta estiver ativa. Ao solicitar a exclusão da conta, removemos seus dados pessoais em até 30 dias, exceto quando obrigados por lei a mantê-los por período maior.</p>
         </div>
 
         <div class="legal-section">
-          <h2><span class="num">08</span> Alterações nesta política</h2>
+          <h2><span class="num">09</span> Alterações nesta política</h2>
           <p>Podemos atualizar esta política periodicamente. Alterações relevantes serão comunicadas por e-mail ou notificação no aplicativo. A data da última atualização sempre estará indicada no topo desta página.</p>
         </div>
 
@@ -349,6 +363,7 @@
       <div class="footer-inner">
         <a href="/" style="font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1rem;color:var(--txt);text-decoration:none;letter-spacing:-0.03em;">Velox<span style="color:var(--blue)">Vid</span></a>
         <ul class="footer-links">
+          <li><a href="/planos">Planos</a></li>
           <li><a href="/termos">Termos de Uso</a></li>
           <li><a href="/privacidade">Privacidade</a></li>
           <li><a href="mailto:contato@veloxvid.com">Contato</a></li>

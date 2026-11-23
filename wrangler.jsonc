@@ -1,0 +1,21 @@
+// Publicação no Cloudflare Workers (arquivos estáticos).
+// Baseado na configuração que o próprio Cloudflare gerou para este projeto
+// (PR nº 1, ramo cloudflare/workers-autoconfig), com a página 404 ligada.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "veloxvid-site",
+  "compatibility_date": "2026-05-25",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    // Endereço que não existe: responde 404 com a página 404.html (antes, 404 em branco).
+    "not_found_handling": "404-page",
+    // /conta.html redireciona para /conta, /planos serve planos.html (comportamento atual).
+    "html_handling": "auto-trailing-slash"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
