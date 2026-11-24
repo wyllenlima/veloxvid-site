@@ -528,7 +528,7 @@ nav.scrolled, nav.solid {
 /* Floating badge */
 .mockup-badge {
   position: absolute;
-  bottom: -16px;
+  top: -18px;
   right: -20px;
   background: var(--bg-card2);
   border: 1px solid var(--border-mid);
@@ -553,6 +553,236 @@ nav.scrolled, nav.solid {
   margin-top: 3px;
   display: block;
 }
+
+/* ─── Hero: a janela em três atos (roteiro → produção → vídeo pronto) ───
+   O site.js troca o ato ativo. Sem JavaScript, fica o ato 2, parado no fim. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.hero-acts {
+  box-sizing: border-box;
+  height: 392px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.hero-act {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+.hero-act.is-active { display: flex; }
+
+@keyframes actIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes actFill { from { width: 4%; } to { width: 96%; } }
+@keyframes stageDone {
+  to { background: rgba(76,175,80,0.15); border-color: rgba(76,175,80,0.4); color: var(--green); }
+}
+@keyframes stepFill { from { width: 0; } to { width: 100%; } }
+
+/* Ato 1: o roteiro */
+.act-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.act-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--txt-2);
+}
+.act-chips { display: flex; gap: 6px; }
+.act-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  color: var(--txt-2);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-mid);
+  border-radius: 4px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+.act-chip.accent {
+  color: var(--blue);
+  background: var(--blue-dim);
+  border-color: rgba(74,158,255,0.3);
+}
+.act-script {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.88);
+}
+.act-script > span { animation: actIn 0.5s ease both; }
+.act-script > span:nth-child(2) { animation-delay: 0.5s; }
+.act-script > span:nth-child(3) { animation-delay: 1.2s; }
+.act-script > span:nth-child(4) { animation-delay: 1.9s; }
+.act-script > span:nth-child(5) { animation-delay: 2.6s; }
+.act-script-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.01em;
+  color: var(--txt);
+  margin-bottom: 4px;
+}
+.act-caret {
+  display: inline-block;
+  width: 2px; height: 1em;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: var(--blue);
+  animation: blink 0.9s step-end infinite;
+}
+.act-voice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.act-voice-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  color: var(--txt-2);
+}
+.act-voice .waveform {
+  flex: 1;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ato 2: a produção */
+.hero-act .mock-job { margin-bottom: 0; }
+.hero-act .mock-progress { margin-top: 10px; }
+.hero-act .mock-progress-track span {
+  width: 96%;
+  animation: actFill 5s ease-in-out both;
+}
+.mock-stage.anim .mock-stage-mark {
+  animation: stageDone 0.4s ease forwards;
+  animation-delay: var(--d, 0s);
+}
+.mock-stage.anim .mock-stage-detail { color: var(--txt-2); }
+.act-scenes {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+.act-scenes img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 5px;
+  animation: actIn 0.45s ease both;
+  animation-delay: var(--d, 0s);
+}
+
+/* Ato 3: o vídeo pronto */
+.hero-act.act-final { animation: actIn 0.5s ease both; }
+.act-player {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border-mid);
+  background: #0d0d14;
+}
+.act-player video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+.act-player-chip {
+  position: absolute;
+  top: 10px; left: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  color: #fff;
+  background: rgba(14,17,23,0.78);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 3px 8px;
+}
+.act-done {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.act-done > div { display: flex; flex-direction: column; gap: 2px; }
+.act-done .mock-job-meta { margin-top: 0; }
+.mock-pill.done {
+  color: var(--green);
+  background: rgba(76,175,80,0.12);
+  border-color: rgba(76,175,80,0.4);
+}
+
+/* Os três passos, embaixo da janela */
+.hero-steps {
+  display: none;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 20px 18px;
+}
+.js .hero-steps { display: grid; }
+.hero-step {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 6px 0 0;
+  min-height: 44px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.hero-step-track {
+  display: block;
+  height: 3px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden;
+}
+.hero-step-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--blue);
+}
+.hero-step.is-done .hero-step-fill { width: 100%; }
+.hero-step.is-active .hero-step-fill {
+  width: 100%;
+  animation: stepFill var(--dur, 5s) linear both;
+}
+.hero-step-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  color: var(--txt-2);
+  transition: color 0.2s;
+}
+.hero-step.is-active .hero-step-label,
+.hero-step:hover .hero-step-label { color: var(--txt); }
 
 /* ─── Trust bar ─── */
 .trust-bar {
@@ -1672,8 +1902,15 @@ footer {
   .req-item { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
   .cta-box { padding: 56px 24px; }
   .modal-box { padding: 28px 22px; }
-  .mock-stages { grid-template-columns: 1fr; }
-  .mock-stage.pending { display: none; }
+  .hero-acts { height: 316px; padding: 16px; }
+  .hero-step-label { font-size: 0.58rem; letter-spacing: 0; white-space: nowrap; }
+  .hero-visual .mockup-badge { display: none; }
+  /* no celular o roteiro corre como um parágrafo só, em vez de linha a linha */
+  .act-script { display: block; padding: 14px 16px; font-size: 0.82rem; }
+  .act-script-title { display: block; }
+  .act-chip:not(.accent) { display: none; }
+  .hero-act .mock-stage-detail { display: none; }
+  .hero-steps { padding: 0 16px 16px; }
 
   /* A tabela vira uma pilha de cartões */
   .compare-table,

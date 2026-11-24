@@ -15,6 +15,9 @@
 /assets/img/*
   Cache-Control: public, max-age=2592000
 
+/assets/video/*
+  Cache-Control: public, max-age=2592000
+
 /favicon.ico
   Cache-Control: public, max-age=604800
 

@@ -54,6 +54,81 @@
     });
   }
 
+  // ─── Hero: a janela em três atos ───────────────────────────
+  // Roteiro → Produção → Vídeo pronto, em laço. Só roda com a janela à vista
+  // e a aba aberta; com "reduzir movimento" ligado, fica parada no ato 2.
+  var heroWin = $('#heroActs');
+  if (heroWin) {
+    var actEls = $all('.hero-act', heroWin);
+    var stepEls = $all('.hero-step', heroWin);
+    var actName = $('#heroActName');
+    var actVideo = $('video', heroWin);
+    var ACT_MS = [4400, 5800, 6600];
+    var reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    var currentAct = -1;
+    var actTimer = null;
+    var actsInView = false;
+
+    var loadActVideo = function () {
+      if (actVideo && !actVideo.getAttribute('src') && actVideo.dataset.src) {
+        actVideo.preload = 'auto';
+        actVideo.src = actVideo.dataset.src;
+      }
+    };
+
+    var showAct = function (i) {
+      currentAct = i;
+      actEls.forEach(function (el, k) {
+        el.classList.remove('is-active');
+        if (k === i) { void el.offsetWidth; el.classList.add('is-active'); }
+      });
+      stepEls.forEach(function (el, k) {
+        el.classList.remove('is-active', 'is-done');
+        el.style.setProperty('--dur', ACT_MS[k] + 'ms');
+        el.setAttribute('aria-pressed', k === i ? 'true' : 'false');
+        if (k < i) el.classList.add('is-done');
+        if (k === i) { void el.offsetWidth; el.classList.add(reduceMotion ? 'is-done' : 'is-active'); }
+      });
+      if (actName && actEls[i]) actName.textContent = actEls[i].dataset.name || '';
+      if (i >= 1) loadActVideo();
+      if (actVideo) {
+        if (i === 2 && !reduceMotion) {
+          try { actVideo.currentTime = 0; } catch (err) { /* ainda sem dados */ }
+          var playing = actVideo.play();
+          if (playing && playing.catch) playing.catch(function () {});
+        } else {
+          actVideo.pause();
+        }
+      }
+    };
+
+    var scheduleAct = function () {
+      clearTimeout(actTimer);
+      if (reduceMotion || !actsInView || document.hidden) return;
+      actTimer = setTimeout(function () {
+        showAct((currentAct + 1) % actEls.length);
+        scheduleAct();
+      }, ACT_MS[currentAct]);
+    };
+
+    stepEls.forEach(function (el, k) {
+      el.addEventListener('click', function () { showAct(k); scheduleAct(); });
+    });
+
+    showAct(reduceMotion ? 1 : 0);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        actsInView = entries[0].isIntersecting;
+        if (actsInView) scheduleAct(); else { clearTimeout(actTimer); if (actVideo) actVideo.pause(); }
+      }, { threshold: 0.25 }).observe(heroWin);
+    } else {
+      actsInView = true;
+      scheduleAct();
+    }
+    document.addEventListener('visibilitychange', scheduleAct);
+  }
+
   // ─── Entrada das seções ────────────────────────────────────
   var fadeEls = $all('.fade-up');
   if ('IntersectionObserver' in window) {
