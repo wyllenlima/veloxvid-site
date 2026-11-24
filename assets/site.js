@@ -69,11 +69,24 @@
     var actTimer = null;
     var actsInView = false;
 
+    // O vídeo é baixado inteiro e tocado da memória: o servidor não atende pedidos
+    // parciais (Range), que o Safari exige para tocar direto do endereço.
+    var actVideoAsked = false;
+    var playActVideo = function () {
+      if (!actVideo || currentAct !== 2 || reduceMotion || !actVideo.getAttribute('src')) return;
+      try { actVideo.currentTime = 0; } catch (err) { /* ainda sem dados */ }
+      var playing = actVideo.play();
+      if (playing && playing.catch) playing.catch(function () {});
+    };
     var loadActVideo = function () {
-      if (actVideo && !actVideo.getAttribute('src') && actVideo.dataset.src) {
-        actVideo.preload = 'auto';
-        actVideo.src = actVideo.dataset.src;
-      }
+      if (!actVideo || actVideoAsked || !actVideo.dataset.src) return;
+      actVideoAsked = true;
+      var direct = function () { actVideo.src = actVideo.dataset.src; playActVideo(); };
+      if (!window.fetch || !window.URL || !URL.createObjectURL) { direct(); return; }
+      fetch(actVideo.dataset.src)
+        .then(function (res) { if (!res.ok) throw new Error('vídeo'); return res.blob(); })
+        .then(function (blob) { actVideo.src = URL.createObjectURL(blob); playActVideo(); })
+        .catch(direct);
     };
 
     var showAct = function (i) {
@@ -92,13 +105,7 @@
       if (actName && actEls[i]) actName.textContent = actEls[i].dataset.name || '';
       if (i >= 1) loadActVideo();
       if (actVideo) {
-        if (i === 2 && !reduceMotion) {
-          try { actVideo.currentTime = 0; } catch (err) { /* ainda sem dados */ }
-          var playing = actVideo.play();
-          if (playing && playing.catch) playing.catch(function () {});
-        } else {
-          actVideo.pause();
-        }
+        if (i === 2) playActVideo(); else actVideo.pause();
       }
     };
 
