@@ -843,6 +843,80 @@ nav.scrolled, nav.solid {
 h1, h2, .section-sub, .hero-sub, .step-desc { text-wrap: balance; }
 .feat-desc, .req-desc, .faq-a-inner, .cta-box p { text-wrap: pretty; }
 
+/* ─── Veja por dentro: capturas reais ─── */
+.inside-section {
+  padding: 80px 0;
+}
+.inside-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.inside-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+/* As duas capturas da linha ficam com a mesma altura: cada uma cresce na proporção dela */
+.inside-row .inside-shot {
+  flex: var(--ar, 1) 1 0;
+  min-width: 0;
+}
+.inside-shot { margin: 0; }
+.inside-frame {
+  display: block;
+  text-decoration: none;
+  background: #0d0d14;
+  border: 1px solid var(--border-mid);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(74,158,255,0.06);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.inside-frame:hover {
+  border-color: rgba(74,158,255,0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.5), 0 0 32px rgba(74,158,255,0.12);
+}
+.inside-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.inside-bar .titlebar-dot { width: 9px; height: 9px; }
+.inside-bar .titlebar-name { margin-left: 6px; }
+.inside-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* A captura do pedido é cortada antes das estimativas: a borda de baixo some aos poucos */
+.inside-wide img {
+  -webkit-mask-image: linear-gradient(to bottom, #000 76%, transparent);
+  mask-image: linear-gradient(to bottom, #000 76%, transparent);
+}
+.inside-shot figcaption {
+  margin-top: 14px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--txt-2);
+  max-width: 62ch;
+}
+.inside-shot figcaption strong {
+  color: var(--txt);
+  font-weight: 500;
+}
+.inside-note {
+  margin-top: 28px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--txt-2);
+  text-align: center;
+}
+
 /* ─── Steps ─── */
 .steps-section {
   padding: 120px 0 80px;
@@ -2038,6 +2112,8 @@ footer {
   .req-grid { grid-template-columns: 1fr; }
   .req-aside { position: static; }
   .first-inner { grid-template-columns: 1fr; gap: 32px; padding: 36px 28px; }
+  .inside-row { flex-direction: column; gap: 32px; }
+  .inside-row .inside-shot { flex: none; width: 100%; }
   .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; gap: 24px; }
   .pricing-features-shared { padding: 22px 20px; }
   .cover-grid { grid-template-columns: 1fr; }
