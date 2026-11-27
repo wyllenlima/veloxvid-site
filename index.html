@@ -118,12 +118,12 @@
             Cole o roteiro ou envie a narração. O VeloxVid narra, encontra o visual de cada cena, aplica o estilo que você escolher e monta o vídeo no seu computador.
           </p>
           <div class="hero-actions">
-            <a href="#" data-download class="btn-primary">
+            <a href="https://github.com/wyllenlima/VeloxVid-releases/releases" data-download class="btn-primary">
               ↓ Baixar para Windows
             </a>
             <a href="#pricing" class="btn-secondary">Ver planos →</a>
           </div>
-          <p class="hero-note">Windows 10/11 · 64-bit · <span class="app-version">-</span> · requer assinatura</p>
+          <p class="hero-note">Windows 10/11 · 64-bit<span class="release-info" hidden> · <span data-release="version"></span> · instalador de <span data-release="size"></span></span> · requer assinatura</p>
         </div>
 
         <div class="hero-visual">
@@ -736,6 +736,16 @@
 
         <div class="faq-item">
           <h3><button class="faq-q" type="button">
+            O Windows mostra um aviso ao instalar. É normal?
+            <span class="faq-arrow" aria-hidden="true">+</span>
+          </button></h3>
+          <div class="faq-a">
+            <div class="faq-a-inner">Sim. O instalador ainda não tem assinatura digital, então o Windows pode mostrar a tela “O Windows protegeu o computador”. Para continuar, clique em “Mais informações” e depois em “Executar assim mesmo”.</div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3><button class="faq-q" type="button">
             Posso cancelar quando quiser?
             <span class="faq-arrow" aria-hidden="true">+</span>
           </button></h3>
@@ -764,12 +774,12 @@
         <h2>Seu próximo vídeo começa<br>com um roteiro.</h2>
         <p>Assine, instale no seu Windows e cole o primeiro.</p>
         <div class="cta-actions">
-          <a href="#" data-download class="btn-primary">
+          <a href="https://github.com/wyllenlima/VeloxVid-releases/releases" data-download class="btn-primary">
             ↓ Baixar para Windows
           </a>
           <a href="#pricing" class="btn-secondary">Ver planos →</a>
         </div>
-        <p class="cta-note">Windows 10/11 · 64-bit · <span class="app-version">-</span> · Atualização automática incluída</p>
+        <p class="cta-note">Windows 10/11 · 64-bit<span class="release-info" hidden> · <span data-release="version"></span> · <span data-release="size"></span></span> · Atualização automática incluída</p>
       </div>
     </div>
   </section>
@@ -795,18 +805,8 @@
   </footer>
 
   <!-- ─── JS ─── -->
-  <script>
-    // ╔══════════════════════════════════════════════════════════╗
-    // ║  RELEASE — altere aqui a cada novo lançamento           ║
-    // ╚══════════════════════════════════════════════════════════╝
-    const APP_RELEASE  = 'v1.0.72'; // ← atualize esta linha
-    const APP_VERSION = APP_RELEASE.replace(/^v/, '')
-    const DOWNLOAD_URL = `https://github.com/wyllenlima/VeloxVid-releases/releases/download/${APP_RELEASE}/VeloxVid-Setup.exe`;
-
-    // ─── Versão e URLs de download ────────────────────────────
-    document.querySelectorAll('.app-version').forEach(el => el.textContent = APP_RELEASE);
-    document.querySelectorAll('[data-download]').forEach(el => el.href = DOWNLOAD_URL);
-  </script>
+  <!-- A versão do aplicativo e o link de download ficam em assets/release.js -->
+  <script src="/assets/release.js"></script>
   <script src="/assets/site.js" defer></script>
 </body>
 </html>

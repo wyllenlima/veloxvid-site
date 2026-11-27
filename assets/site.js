@@ -1,5 +1,5 @@
 /* VeloxVid — comportamento compartilhado do site (início, planos e 404).
-   A versão do aplicativo (APP_RELEASE) continua em index.html e conta.html. */
+   A versão do aplicativo e o link de download ficam em assets/release.js. */
 (function () {
   'use strict';
 
