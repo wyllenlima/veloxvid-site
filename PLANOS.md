@@ -37,9 +37,10 @@
 
 - Produção automática — do roteiro ao vídeo montado
 - 17 estilos, com peças gráficas e trilhas
+- Cenas desenhadas, em qualquer estilo
 - Editor de vídeo e busca de vídeos
 - Transcrição no seu computador
-- Roteiro, Cenas e Thumbnail com o ChatGPT ou Claude do cliente
+- Roteiro e Cenas com o ChatGPT ou Claude do cliente; Thumbnail com o ChatGPT do cliente
 - Até 3 computadores por conta
 - Atualização automática
 
