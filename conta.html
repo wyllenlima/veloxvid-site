@@ -717,8 +717,8 @@
       document.getElementById('dashName').textContent   = user.name || displayName;
       document.getElementById('dashEmail').textContent  = user.email;
 
-      const labels = { mensal: 'Plano Pro Mensal', trimestral: 'Plano Pro Trimestral', anual: 'Plano Pro Anual', pro: 'Plano Pro' };
-      const label  = labels[user.plan] || (user.plan ? 'Plano ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Plano Pro');
+      const labels = { mensal: 'Plano mensal', trimestral: 'Plano trimestral', anual: 'Plano anual', pro: 'Plano' };
+      const label  = labels[user.plan] || (user.plan ? 'Plano ' + user.plan.charAt(0).toUpperCase() + user.plan.slice(1) : 'Plano');
 
       document.getElementById('dashPlanBadge').textContent = label.toUpperCase();
 
