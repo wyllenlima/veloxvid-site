@@ -944,7 +944,84 @@ h1, h2, .section-sub, .hero-sub, .step-desc { text-wrap: balance; }
 .feature-card:hover::before { opacity: 1; }
 
 .feature-card.wide { grid-column: span 2; }
+.feature-card.full { grid-column: 1 / -1; }
 .tools .feature-card { padding: 24px; }
+
+/* Card largo com texto à esquerda e um quadro de apoio à direita (cenas desenhadas) */
+.feat-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.feat-new {
+  display: inline-block;
+  margin-left: 8px;
+  vertical-align: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-dim);
+  border: 1px solid rgba(74,158,255,0.35);
+  border-radius: 100px;
+  padding: 2px 9px;
+}
+
+/* "Quanto do vídeo": as quatro opções da tela Produzir */
+.dose {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.dose-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--txt-2);
+  margin-bottom: 14px;
+}
+.dose-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dose-row {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  font-size: 0.84rem;
+  color: var(--txt);
+}
+.dose-bar {
+  display: block;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.08);
+  overflow: hidden;
+}
+.dose-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(to right, var(--blue), #7cc0ff);
+}
+.dose-foot {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--txt-2);
+}
 
 .feat-icon {
   width: 44px; height: 44px;
@@ -1876,6 +1953,7 @@ footer {
   .features-grid { grid-template-columns: 1fr 1fr; grid-auto-flow: dense; }
   .feature-card.wide,
   .features-grid:not(.tools) .feature-card:last-child { grid-column: span 2; }
+  .feat-split { grid-template-columns: 1fr; gap: 24px; }
   .steps-section { padding-top: 96px; }
   .steps-track::before { display: none; }
   .steps-track { grid-template-columns: 1fr 1fr; gap: 40px 0; }
