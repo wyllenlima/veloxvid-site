@@ -2090,7 +2090,7 @@ footer {
 }
 @media (max-width: 900px) {
   .hero-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 48px;
     text-align: center;
     padding: 60px 0;
@@ -2122,6 +2122,8 @@ footer {
 }
 @media (max-width: 560px) {
   .hero-badge { font-size: 0.62rem; letter-spacing: 0.02em; padding: 6px 12px; }
+  /* "Automaticamente." precisa caber numa linha em 360 px */
+  .hero h1 { font-size: clamp(2rem, 9.4vw, 2.6rem); }
   .features-grid,
   .features-grid.tools { grid-template-columns: 1fr; }
   .feature-card.wide,
@@ -2183,4 +2185,9 @@ footer {
     padding-top: 2px;
   }
   .compare-table td.win::before { color: var(--blue); }
+}
+
+/* Telas bem estreitas (360 px): o selo do hero cabe numa linha */
+@media (max-width: 400px) {
+  .hero-badge { gap: 6px; font-size: 0.58rem; letter-spacing: 0; padding: 6px 10px; }
 }
